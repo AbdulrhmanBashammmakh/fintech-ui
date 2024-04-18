@@ -5,11 +5,17 @@ import 'package:fintech/views/Expenses/expenses-main.dart';
 import 'package:fintech/views/HomePage.dart';
 import 'package:fintech/views/Ledger/ledger-main.dart';
 import 'package:fintech/views/LoginPage.dart';
+import 'package:fintech/views/Perform/account-page.dart';
+import 'package:fintech/views/Perform/cate-page.dart';
 import 'package:fintech/views/Perform/performPage.dart';
+import 'package:fintech/views/Perform/unit-page.dart';
+import 'package:fintech/views/Perform/vendor-page.dart';
 import 'package:fintech/views/Purchases/add_purchases.dart';
 import 'package:fintech/views/Purchases/purchase_main.dart';
 import 'package:fintech/views/Purchases/purchases_list.dart';
 import 'package:fintech/views/Purchases/temp_purchases.dart';
+import 'package:fintech/views/Sales/new-sale.dart';
+import 'package:fintech/views/Sales/sale-list.dart';
 import 'package:fintech/views/Sales/sale-main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -131,6 +137,22 @@ final List<GetPage> pages = [
     page: () => const PerformMain(),
   ),
   GetPage(
+    name: "/perform/acc",
+    page: () => const AccountPage(),
+  ),
+  GetPage(
+    name: "/perform/vendor",
+    page: () => const VendorPage(),
+  ),
+  GetPage(
+    name: "/perform/unit",
+    page: () => const UnitPage(),
+  ),
+  GetPage(
+    name: "/perform/cate",
+    page: () => const CatePage(),
+  ),
+  GetPage(
     name: "/purchase",
     page: () => const PurchaseMain(),
   ),
@@ -153,6 +175,14 @@ final List<GetPage> pages = [
   GetPage(
     name: "/sale",
     page: () => const SaleMain(),
+  ),
+  GetPage(
+    name: "/sale/list",
+    page: () => const SaleList(),
+  ),
+  GetPage(
+    name: "/sale/insert",
+    page: () => const NewSale(),
   ),
   GetPage(
     name: "/ledger",
@@ -763,6 +793,7 @@ class LocaleString extends Translations {
   Map<String, String> arabic() {
     return {
       'add': 'أضافة',
+      'sales': 'المبيعات',
       'state': 'الحالة',
       'sale': 'المبيعات',
       'discount': 'الخصم',

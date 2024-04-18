@@ -40,78 +40,6 @@ class _PerformMainState extends State<PerformMain> {
                 fontWeight: FontWeight.bold,
               ),
             )),
-            // Container(
-            //   width: md / 2,
-            //   padding: const EdgeInsets.all(15),
-            //   child: ElevatedButton(
-            //     style: ButtonStyle(
-            //         backgroundColor: MaterialStateColor.resolveWith(
-            //             (states) => AColors.CornflowerBlue)),
-            //     onPressed: () async {},
-            //     child: const Text(
-            //       'المبيعات',
-            //       style: TextStyle(
-            //         fontFamily: 'Arial',
-            //         fontSize: 16,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // Container(
-            //   width: md / 2,
-            //   padding: const EdgeInsets.all(15),
-            //   child: ElevatedButton(
-            //     style: ButtonStyle(
-            //         backgroundColor: MaterialStateColor.resolveWith(
-            //             (states) => AColors.CornflowerBlue)),
-            //     onPressed: () async {},
-            //     child: const Text(
-            //       'المبيعات',
-            //       style: TextStyle(
-            //         fontFamily: 'Arial',
-            //         fontSize: 16,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // Container(
-            //   width: md / 2,
-            //   padding: const EdgeInsets.all(15),
-            //   child: ElevatedButton(
-            //     style: ButtonStyle(
-            //         backgroundColor: MaterialStateColor.resolveWith(
-            //             (states) => AColors.CornflowerBlue)),
-            //     onPressed: () async {},
-            //     child: const Text(
-            //       'المبيعات',
-            //       style: TextStyle(
-            //         fontFamily: 'Arial',
-            //         fontSize: 16,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // Container(
-            //   width: md / 2,
-            //   padding: const EdgeInsets.all(15),
-            //   child: ElevatedButton(
-            //     style: ButtonStyle(
-            //         backgroundColor: MaterialStateColor.resolveWith(
-            //             (states) => AColors.CornflowerBlue)),
-            //     onPressed: () async {},
-            //     child: const Text(
-            //       'المبيعات',
-            //       style: TextStyle(
-            //         fontFamily: 'Arial',
-            //         fontSize: 16,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             const SizedBox(
               height: 50,
             ),
@@ -124,7 +52,9 @@ class _PerformMainState extends State<PerformMain> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith(
                             (states) => AColors.CornflowerBlue)),
-                    onPressed: () async {},
+                    onPressed: () async {
+                      Get.toNamed('/perform/acc');
+                    },
                     child: Text(
                       'accounts'.tr,
                       style: TextStyle(
@@ -145,7 +75,9 @@ class _PerformMainState extends State<PerformMain> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith(
                             (states) => AColors.CornflowerBlue)),
-                    onPressed: () async {},
+                    onPressed: () async {
+                      Get.toNamed('/perform/unit');
+                    },
                     child: Text(
                       'units'.tr,
                       style: TextStyle(
@@ -167,7 +99,7 @@ class _PerformMainState extends State<PerformMain> {
                         backgroundColor: MaterialStateColor.resolveWith(
                             (states) => AColors.CornflowerBlue)),
                     onPressed: () async {
-                      // Get.toNamed('/');
+                      Get.toNamed('/perform/cate');
                     },
                     child: Text(
                       'cates'.tr,
@@ -190,7 +122,9 @@ class _PerformMainState extends State<PerformMain> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith(
                             (states) => AColors.CornflowerBlue)),
-                    onPressed: () async {},
+                    onPressed: () async {
+                      Get.toNamed('/perform/vendor');
+                    },
                     child: Text(
                       'vendors'.tr,
                       style: TextStyle(
