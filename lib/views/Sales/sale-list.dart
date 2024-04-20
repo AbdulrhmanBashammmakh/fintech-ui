@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import '../../endPoint/send-req.dart';
 import '../../models/BaseModel.dart';
+import '../../models/Sale.dart';
 import '../../widgets/button_main.dart';
 
 class SaleList extends StatefulWidget {
@@ -17,10 +18,11 @@ class SaleList extends StatefulWidget {
 }
 
 class _SaleListState extends State<SaleList> {
-  Future<ResponseObject>? _unitsDataFuture;
+  Future<ResponseObject>? saleDataFuture;
   Future<ResponseObject>? _units;
   Future<ResponseObject>? _vendorsDataFuture;
   Future<ResponseObject>? _catesDataFuture;
+  Future<List<SaleHead>?>? listOfSale;
   String urlUnit = ApiEndPoint.URL + ApiEndPoint.UnitMainAll;
   String urlVendor = ApiEndPoint.URL + ApiEndPoint.VendorMainAll;
   String urlCate = ApiEndPoint.URL + ApiEndPoint.CateMainAll;
@@ -58,6 +60,7 @@ class _SaleListState extends State<SaleList> {
   final double scrollWidth = 12;
   bool isAscending = false;
   int? sortColumnIndex;
+
   List<DataColumn> getColumns(List<String> columns) => columns
       .map((String column) => DataColumn(
             label: Expanded(
@@ -71,15 +74,12 @@ class _SaleListState extends State<SaleList> {
   List<BaseModel> uList = <BaseModel>[];
   List<BaseModel> cateList = <BaseModel>[];
   List<BaseModel> vendorList = <BaseModel>[];
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _unitsDataFuture = getInvRequest();
-
-      //  _units = getAllMainRequest(fullUrl: urlUnit);
-      // // _vendorsDataFuture = getAllMainRequest(fullUrl: urlVendor);
-      //  _catesDataFuture = getAllMainRequest(fullUrl: urlCate);
-      // getaAll();
+      saleDataFuture = getInvRequestPost(
+          fullUrl: "http://localhost:9098/myapp238/api/v1/sale/all");
 
       setState(() {});
     });
@@ -87,70 +87,70 @@ class _SaleListState extends State<SaleList> {
     super.initState();
   }
 
-  getaAll() async {
-    try {
-      final value = await _unitsDataFuture;
-      final value2 = value?.data.rep!.toList();
-      value2?.forEach((e) {
-        cateList.add(BaseModel(id: e.id, name: e.name));
-      });
-      debugPrint("${cateList.length}");
-    } catch (e) {
-      debugPrint("sth cates");
-    }
-
-    try {
-      final value = await _vendorsDataFuture;
-      final value2 = value?.data.rep!.toList();
-      value2?.forEach((e) {
-        vendorList.add(BaseModel(id: e.id, name: e.name));
-      });
-      debugPrint("${vendorList.length}");
-    } catch (e) {
-      debugPrint("sth cates");
-    }
-    try {
-      final value = await _units;
-      final value2 = value?.data.rep!.toList();
-      value2?.forEach((e) {
-        uList.add(BaseModel(id: e.id, name: e.name));
-      });
-      debugPrint("${uList.length}");
-    } catch (e) {
-      debugPrint("sth cates");
-    }
-
-    // _vendorsDataFuture?.then((value) => value.data.rep?.forEach((e) {
-    //       vendorList.add(BaseModel(id: e.id, name: e.name));
-    //     }));
-    //
-    // _units?.then((value) => value.data.rep?.forEach((e) {
-    //       uList.add(BaseModel(id: e.id, name: e.name));
-    //       debugPrint("${e.name}");
-    //     }));
-    //
-    // debugPrint("${uList.length}");
-    // _catesDataFuture?.then((value) => value.data.rep?.forEach((e) {
-    //       cateList.add(BaseModel(id: e.id, name: e.name));
-    //     }));
-  }
+  // getaAll() async {
+  //   try {
+  //     final value = await _unitsDataFuture;
+  //     final value2 = value?.data.rep!.toList();
+  //     value2?.forEach((e) {
+  //       cateList.add(BaseModel(id: e.id, name: e.name));
+  //     });
+  //     debugPrint("${cateList.length}");
+  //   } catch (e) {
+  //     debugPrint("sth cates");
+  //   }
+  //
+  //   try {
+  //     final value = await _vendorsDataFuture;
+  //     final value2 = value?.data.rep!.toList();
+  //     value2?.forEach((e) {
+  //       vendorList.add(BaseModel(id: e.id, name: e.name));
+  //     });
+  //     debugPrint("${vendorList.length}");
+  //   } catch (e) {
+  //     debugPrint("sth cates");
+  //   }
+  //   try {
+  //     final value = await _units;
+  //     final value2 = value?.data.rep!.toList();
+  //     value2?.forEach((e) {
+  //       uList.add(BaseModel(id: e.id, name: e.name));
+  //     });
+  //     debugPrint("${uList.length}");
+  //   } catch (e) {
+  //     debugPrint("sth cates");
+  //   }
+  //
+  //   // _vendorsDataFuture?.then((value) => value.data.rep?.forEach((e) {
+  //   //       vendorList.add(BaseModel(id: e.id, name: e.name));
+  //   //     }));
+  //   //
+  //   // _units?.then((value) => value.data.rep?.forEach((e) {
+  //   //       uList.add(BaseModel(id: e.id, name: e.name));
+  //   //       debugPrint("${e.name}");
+  //   //     }));
+  //   //
+  //   // debugPrint("${uList.length}");
+  //   // _catesDataFuture?.then((value) => value.data.rep?.forEach((e) {
+  //   //       cateList.add(BaseModel(id: e.id, name: e.name));
+  //   //     }));
+  // }
 
   ElevatedButton confirmButton({createdAt, id, vendorId, state, total}) {
     return ElevatedButton(
       child: Text("yes".tr),
       onPressed: () async {
         debugPrint("${id}");
-        var det = await getDetTempRequest(parm: id);
+        //  var det = await getDetTempRequest(parm: id);
         // det.data.dets!.length;
         idController.text = id.toString();
-        debugPrint("${det.data.dets!.length}");
+        //  debugPrint("${det.data.dets!.length}");
         dateInvoiceController.text = createdAt;
-        var ven = getVendor(vendorId);
-        vendorController.text = ven;
+        //  var ven = getVendor(vendorId);
+        //  vendorController.text = ven;
         stateController.text = state == 0 ? "مؤقته" : "معتمدة";
         amountController.text = total.toString();
         dismissDialog(context: context);
-        list = det.data.dets!;
+        //   list = det.data.dets!;
         setState(() {});
       },
     );
@@ -378,22 +378,6 @@ class _SaleListState extends State<SaleList> {
                       )),
                 ),
                 Expanded(child: SizedBox()),
-                // Expanded(
-                //     child: Container(
-                //         padding: const EdgeInsets.all(5),
-                //         margin: const EdgeInsets.all(5),
-                //         child: ButtonWidget(
-                //             text: "add-new-sale".tr,
-                //             icon: Icons.add,
-                //             onClicked: () async {
-                //               int x = await sendPostRequestVer(
-                //                   discount: 0,
-                //                   temp: int.parse(idController.text));
-                //               if (x == 1) {
-                //                 // Get.off(() => PurchaseMain());
-                //               }
-                //             }))),
-                // Expanded(child: SizedBox()),
                 Expanded(
                   child: Container(
                       padding: const EdgeInsets.all(5),
@@ -415,55 +399,55 @@ class _SaleListState extends State<SaleList> {
                     padding: const EdgeInsets.all(5),
                     margin: const EdgeInsets.all(5),
                     child: FutureBuilder<ResponseObject>(
-                      future: _unitsDataFuture,
+                      future: saleDataFuture,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          final units = (snapshot.data!.data.invs ?? []);
-                          return ListView.builder(
-                            itemCount: units.length,
-                            itemBuilder: (context, index) {
-                              final unit = units[index];
-                              //debugPrint("reply ${unit.name}");
-                              return GestureDetector(
-                                onTap: () {
-                                  show_Dialog(
-                                    context: context,
-                                    cancelPress: () {
-                                      dismissDialog();
-                                    },
-                                    btnOkText: "ok".tr,
-                                    btnCancelText: 'cancel'.tr,
-                                    btnOk: confirmButton(
-                                        vendorId: unit.vendorId,
-                                        state: unit.state,
-                                        total: unit.total,
-                                        id: unit.id,
-                                        createdAt: unit.createdAt),
-                                    dialogType: "Q",
-                                    title: "  هل تريد اظهار بيانات الفاتورة",
-                                    desc: " رقم${unit.id} ",
-                                  );
+                          final units = (snapshot.data!.data.heads);
+                          return units!.isEmpty
+                              ? Card(
+                                  child: Center(
+                                      child:
+                                          Container(child: Text("Not things"))),
+                                )
+                              : ListView.builder(
+                                  itemCount: units!.length,
+                                  itemBuilder: (context, index) {
+                                    final unit = units[index];
+                                    debugPrint("reply ${unit!.total}");
+                                    return GestureDetector(
+                                      onTap: () {
+                                        show_Dialog(
+                                          context: context,
+                                          cancelPress: () {
+                                            dismissDialog();
+                                          },
+                                          btnOkText: "ok".tr,
+                                          btnCancelText: 'cancel'.tr,
+                                          btnOk: confirmButton(
+                                              vendorId: unit!.id,
+                                              state: 1,
+                                              total: unit.total,
+                                              id: unit.id,
+                                              createdAt: unit.createdAt),
+                                          dialogType: "Q",
+                                          title:
+                                              "  هل تريد اظهار بيانات الفاتورة",
+                                          desc: " رقم${unit.id} ",
+                                        );
 
-                                  setState(() {
-                                    units[index].isSelected =
-                                        !units[index].isSelected;
-                                  });
-                                },
-                                child: Card(
-                                    color: unit.state == 1
-                                        ? Colors.blue
-                                        : Colors.white,
-                                    child: ListTile(
-                                      title: Text('${unit.total} ريال'),
-                                      subtitle: Text(unit.createdAt),
-                                      trailing: Text(unit.id.toString()),
-                                      leading: unit.state == 0
-                                          ? Icon(Icons.add)
-                                          : Icon(Icons.credit_score_rounded),
-                                    )),
-                              );
-                            },
-                          );
+                                        setState(() {});
+                                      },
+                                      child: Card(
+                                          child: ListTile(
+                                        title: Text('${unit!.total} ريال'),
+                                        subtitle: Text(unit.createdAt),
+                                        trailing: Text(unit.id.toString()),
+                                        leading:
+                                            Icon(Icons.credit_score_rounded),
+                                      )),
+                                    );
+                                  },
+                                );
                         } else if (snapshot.hasError) {
                           return Center(child: Text("حدث خطأ"));
                         } else {

@@ -28,6 +28,28 @@ Future<int> sendPostRequest({myObject, myList}) async {
   }
 }
 
+Future<int> sendPostRequestSales({myObject, myList}) async {
+  final invoiceData = {
+    'sale': myObject.toJson(),
+    'items': myList.map((item) => item.toJson()).toList(),
+  };
+
+  try {
+    final response = await dio.post(
+      "http://localhost:9098/myapp238/api/v1/sale/insert",
+      data: invoiceData,
+    );
+
+    if (response.statusCode == 200) {
+      return 1;
+    } else {
+      return 0;
+    }
+  } catch (e) {
+    return 0;
+  }
+}
+
 Future<int> sendPostRequestVer({temp, discount}) async {
   final invoiceData = {
     'temp_id': temp,
@@ -75,7 +97,28 @@ Future<ResponseObject> getAllMainRequest({fullUrl}) async {
 Future<ResponseObject> getInvRequest({fullUrl}) async {
   try {
     final response = await dio.get(
-      "http://localhost:9098/myapp238/api/v1/temp/all",
+      fullUrl,
+      //  data: invoiceData,
+    );
+
+    if (response.statusCode == 200) {
+      final reply = response.data;
+      //    debugPrint("reply $reply");
+      //jsonDecode(reply)
+      return ResponseObject.fromJson(reply);
+      // show_Dialog(desc: "done".tr, dialogType: 'S', context: context);
+    } else {
+      return ResponseObject.fromJson(null);
+    }
+  } catch (e) {
+    return ResponseObject.fromJson(null);
+  }
+}
+
+Future<ResponseObject> getInvRequestPost({fullUrl}) async {
+  try {
+    final response = await dio.post(
+      fullUrl,
       //  data: invoiceData,
     );
 
@@ -165,6 +208,7 @@ Future<ResponseObject> getDetPchRequest({required int parm}) async {
 class Result {
   final int errorNo;
   final String errorNa;
+
   // final bool status;
   Result({
     required this.errorNo,
@@ -188,6 +232,7 @@ class RepRow {
   final String name;
   final int id;
   bool isSelected = false;
+
   RepRow({
     required this.name,
     required this.id,
@@ -207,21 +252,27 @@ class Data {
   final List<TempDet>? dets;
   final List<HeadModel>? heads;
   final List<PchDet>? pchDets;
+  final List<MainStock>? mainStock;
+
   Data({
     required this.rep,
     required this.invs,
     required this.dets,
     required this.heads,
     required this.pchDets,
+    required this.mainStock,
   });
+
   factory Data.fromJson(Map<String, dynamic>? json) {
     return Data(
         rep: parseImages(json),
         invs: parseData(json),
         dets: parseDataDet(json),
         heads: parseDataHead(json),
-        pchDets: parseDataPchDet(json));
+        pchDets: parseDataPchDet(json),
+        mainStock: parseDataMainStock(json));
   }
+
   static List<RepRow> parseImages(imageJson) {
     var list = [];
     if (imageJson?['unitlst'] != null) {
@@ -286,12 +337,31 @@ class Data {
     //  debugPrint('$imageList');
     return imageList;
   }
+
+  static List<MainStock> parseDataMainStock(imageJson) {
+    var list = [];
+    if (imageJson?['ava-lst'] != null) {
+      list = imageJson?['ava-lst'] as List;
+    }
+    if (imageJson?['no-ava-lst'] != null) {
+      list = imageJson?['no-ava-lst'] as List;
+    }
+    if (imageJson?['price-lst'] != null) {
+      list = imageJson?['price-lst'] as List;
+    }
+    List<MainStock> imageList =
+        list.map((data) => MainStock.fromJson(data)).toList();
+    //  debugPrint('$imageList');
+    return imageList;
+  }
 }
 
 class ResponseObject {
   final Result result;
   final Data data;
+
   ResponseObject({required this.result, required this.data});
+
   factory ResponseObject.fromJson(Map<String, dynamic>? json) {
     return ResponseObject(
         result: Result.fromJson(json?['result']),
@@ -326,6 +396,7 @@ class InvoiceModel {
   final double total;
   final double discount;
   bool isSelected = false;
+
   InvoiceModel({
     required this.id,
     required this.vendorId,
@@ -335,6 +406,7 @@ class InvoiceModel {
     required this.total,
     required this.createdAt,
   });
+
   factory InvoiceModel.fromJson(Map<String, dynamic>? json) {
     String createdAt = json?['createdAt'] ?? '';
     int id = int.parse(json?['id']?.toString() ?? '0');
@@ -373,6 +445,7 @@ class HeadModel {
     required this.total,
     required this.createdAt,
   });
+
   factory HeadModel.fromJson(Map<String, dynamic>? json) {
     String createdAt = json?['created_at'] ?? '';
     String vendor = json?['vendor'] ?? '';

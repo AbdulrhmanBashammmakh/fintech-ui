@@ -75,7 +75,8 @@ class _PurchasesTempState extends State<PurchasesTemp> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _unitsDataFuture = getInvRequest();
+      _unitsDataFuture = getInvRequest(
+          fullUrl: "http://localhost:9098/myapp238/api/v1/temp/all");
 
       _units = getAllMainRequest(fullUrl: urlUnit);
       _vendorsDataFuture = getAllMainRequest(fullUrl: urlVendor);

@@ -23,12 +23,27 @@ class _NewSaleState extends State<NewSale> {
   BaseModel baseModel = BaseModel(id: 0, name: '');
   BaseModel cate = BaseModel(id: 0, name: '');
   BaseModel vendor = BaseModel(id: 0, name: '');
+  MainStock mainStock = MainStock(
+      barcode: '',
+      createdAt: '',
+      cateId: 0,
+      code: '',
+      cate: '',
+      qty: 0,
+      unit: '',
+      cost: 0,
+      lastBuy: 0,
+      salePrice: 0,
+      product: '',
+      id: 0);
   GlobalKey<FormState> dataEntryFormState = GlobalKey<FormState>();
   GlobalKey<FormState> formState = GlobalKey<FormState>();
   TextEditingController amountController = TextEditingController();
   TextEditingController productController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController qtyController = TextEditingController();
+  TextEditingController priceAController = TextEditingController();
+  TextEditingController qtyAController = TextEditingController();
   TextEditingController cateController = TextEditingController();
   TextEditingController vendorController = TextEditingController();
   TextEditingController unitController = TextEditingController();
@@ -49,7 +64,7 @@ class _NewSaleState extends State<NewSale> {
     'unit'.tr,
     'barcode'.tr,
   ];
-  List<detSale> DataRequest = <detSale>[];
+  List<detSale> dataRequest = <detSale>[];
   final ScrollController _verticalScrollController = ScrollController();
   final ScrollController _horizontalScrollController = ScrollController();
   final BoxDecoration sliderDecoration = BoxDecoration(
@@ -66,23 +81,69 @@ class _NewSaleState extends State<NewSale> {
   int? sortColumnIndex;
   Future<ResponseObject>? _unitsDataFuture;
   Future<ResponseObject>? _vendorsDataFuture;
+  Future<ResponseObject>? avaDataFuture;
   Future<ResponseObject>? _catesDataFuture;
   String urlUnit = ApiEndPoint.URL + ApiEndPoint.UnitMainAll;
   String urlVendor = ApiEndPoint.URL + ApiEndPoint.VendorMainAll;
   String urlCate = ApiEndPoint.URL + ApiEndPoint.CateMainAll;
+  List<MainStock>? mainList;
+  List<MainStock> mainList2 = [
+    MainStock(
+        barcode: '',
+        createdAt: '',
+        cateId: 0,
+        code: '',
+        cate: '',
+        qty: 0,
+        unit: '',
+        cost: 0,
+        lastBuy: 0,
+        salePrice: 0,
+        product: '',
+        id: 0)
+  ];
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       amountController.text = 0.0.toString();
-      _unitsDataFuture = getAllMainRequest(fullUrl: urlUnit);
-      _vendorsDataFuture = getAllMainRequest(fullUrl: urlVendor);
+      avaDataFuture = getInvRequestPost(
+          fullUrl: "http://localhost:9098/myapp238/api/v1/stock/available");
+      // _unitsDataFuture = getAllMainRequest(fullUrl: urlUnit);
+      // _vendorsDataFuture = getAllMainRequest(fullUrl: urlVendor);
       _catesDataFuture = getAllMainRequest(fullUrl: urlCate);
-      // getaAll();
+      getaAll();
       setState(() {});
     });
 
     super.initState();
+  }
+
+  getaAll() async {
+    try {
+      final value = await avaDataFuture;
+      final value2 = value?.data.mainStock!.toList();
+
+      debugPrint("${value2?.length}");
+      // value2?.forEach((e) {
+      //   mainList?.add(MainStock(
+      //       barcode: e.barcode,
+      //       createdAt: e.createdAt,
+      //       cateId: e.cateId,
+      //       code: e.code,
+      //       cate: e.cate,
+      //       qty: e.qty,
+      //       unit: e.unit,
+      //       cost: e.cost,
+      //       lastBuy: e.lastBuy,
+      //       salePrice: e.salePrice,
+      //       product: e.product,
+      //       id: e.id));
+      // });
+      // debugPrint("${mainList?.length}");
+    } catch (e) {
+      debugPrint("sth mainList");
+    }
   }
 
   List<DataColumn> getColumns(List<String> columns) => columns
@@ -102,7 +163,7 @@ class _NewSaleState extends State<NewSale> {
         appBar: AppBar(
           //       backgroundColor: AColors.MediumSeaGreen,
           title: Text(
-            "pch-add".tr,
+            "sales-add".tr,
             style: const TextStyle(
               fontFamily: 'Arial',
               //   fontSize: 16,
@@ -202,16 +263,16 @@ class _NewSaleState extends State<NewSale> {
                   key: formState,
                   child: Row(
                     children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                            padding: const EdgeInsets.all(5),
-                            margin: const EdgeInsets.all(5),
-                            child: getVendorContainer()),
-                      ),
+                      // const SizedBox(
+                      //   width: 10,
+                      // ),
+                      // Expanded(
+                      //   flex: 2,
+                      //   child: Container(
+                      //       padding: const EdgeInsets.all(5),
+                      //       margin: const EdgeInsets.all(5),
+                      //       child: getVendorContainer()),
+                      // ),
                       const SizedBox(
                         width: 10,
                       ),
@@ -357,32 +418,35 @@ class _NewSaleState extends State<NewSale> {
                                 sortColumnIndex: sortColumnIndex,
                                 columns: getColumns(columns),
                                 horizontalMargin: 10,
-                                rows: DataRequest.map(
-                                  (data) => DataRow(
-                                    cells: <DataCell>[
-                                      DataCell(ElevatedButton(
-                                          onPressed: () {
-                                            DataRequest.remove(data);
-                                            sumInvoice();
-                                            setState(() {});
-                                          },
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    secondaryColor),
-                                          ),
-                                          child: Text('delete'.tr))),
-                                      DataCell(Text(data.cateName)),
-                                      DataCell(Text(data.code)),
-                                      DataCell(Text(data.name)),
-                                      DataCell(Text(data.qty.toString())),
-                                      DataCell(Text(data.price.toString())),
-                                      DataCell(Text(data.amount.toString())),
-                                      DataCell(Text(data.unitName)),
-                                      DataCell(Text(data.code)),
-                                    ],
-                                  ),
-                                ).toList(),
+                                rows: dataRequest
+                                    .map(
+                                      (data) => DataRow(
+                                        cells: <DataCell>[
+                                          DataCell(ElevatedButton(
+                                              onPressed: () {
+                                                dataRequest.remove(data);
+                                                sumInvoice();
+                                                setState(() {});
+                                              },
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        secondaryColor),
+                                              ),
+                                              child: Text('delete'.tr))),
+                                          DataCell(Text(data.cateName)),
+                                          DataCell(Text(data.code)),
+                                          DataCell(Text(data.name)),
+                                          DataCell(Text(data.qty.toString())),
+                                          DataCell(Text(data.price.toString())),
+                                          DataCell(
+                                              Text(data.amount.toString())),
+                                          DataCell(Text(data.unitName)),
+                                          DataCell(Text(data.code)),
+                                        ],
+                                      ),
+                                    )
+                                    .toList(),
                               ),
                             ),
                           ),
@@ -403,18 +467,16 @@ class _NewSaleState extends State<NewSale> {
     return ElevatedButton(
       child: Text("yes".tr),
       onPressed: () async {
-        var inv = Invoice(
+        var inv = InvoiceSale(
             total: double.parse(amountController.text),
             discount: 0.0,
-            flag: 0,
-            vendor: vendor.id);
+            customer: '');
         List<Item> itm = [];
-        for (var e in DataRequest) {
-          itm.add(
-              Item(e.price, e.amount, e.name, e.code, e.cate, e.qty, e.unit));
+        for (var e in dataRequest) {
+          itm.add(Item(e.price, e.amount, e.name, e.code, e.cate, e.qty, 1));
         }
         dismissDialog(context: context);
-        int x = await sendPostRequest(myList: itm, myObject: inv);
+        int x = await sendPostRequestSales(myList: itm, myObject: inv);
         debugPrint("$x");
         if (x == 1) {
           complete = true;
@@ -452,6 +514,52 @@ class _NewSaleState extends State<NewSale> {
               children: [
                 Expanded(
                   child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: getCateContainer()),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: getMainStockContainer()),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      enabled: false,
+                      readOnly: true,
+                      controller: qtyAController,
+                      decoration: InputDecoration(
+                        label: Text("qty".tr),
+                        counterText: "",
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    //    color: Colors.grey.shade500,
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      readOnly: true,
+                      enabled: false,
+                      controller: priceAController,
+                      decoration: InputDecoration(
+                        label: Text("cost".tr),
+                        counterText: "",
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
                     margin: const EdgeInsets.all(5),
                     child: TextFormField(
                       controller: codeController,
@@ -467,7 +575,7 @@ class _NewSaleState extends State<NewSale> {
                   ),
                 ),
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Container(
                     margin: const EdgeInsets.all(5),
                     child: TextFormField(
@@ -482,22 +590,6 @@ class _NewSaleState extends State<NewSale> {
                       },
                     ),
                   ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.all(5),
-                      child: getCateContainer()),
-                ),
-                Expanded(
-                  child: Container(
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.all(5),
-                      child: getUnitContainer()),
                 ),
                 Expanded(
                   child: Container(
@@ -556,7 +648,7 @@ class _NewSaleState extends State<NewSale> {
                                 cate: cate.id,
                                 price: pr,
                                 qty: qt,
-                                unit: baseModel.id,
+                                unit: unitController.text,
                                 cateName: cate.name,
                                 unitName: baseModel.name);
                             fillTable(det);
@@ -584,15 +676,23 @@ class _NewSaleState extends State<NewSale> {
     });
   }
 
+  getProductsChoose() {
+    reset();
+    return StatefulBuilder(builder: (context, setState) {
+      bool isLoading = false;
+      return getMainStockContainer();
+    });
+  }
+
   fillTable(detSale det) {
-    DataRequest.add(det);
+    dataRequest.add(det);
     sumInvoice();
     setState(() {});
   }
 
   sumInvoice() {
     double x = 0;
-    for (var e in DataRequest) {
+    for (var e in dataRequest) {
       x += e.amount;
     }
     amountController.text = x.toString();
@@ -707,6 +807,10 @@ class _NewSaleState extends State<NewSale> {
                 cateController.text = item!.id.toString();
                 //  print(unitController.text);
                 cate = item;
+                mainList2 = mainList!
+                    .where((e) => e.cateId.toString() == cateController.text)
+                    .toList();
+
                 setState(() {});
               },
               selectedItem: cate,
@@ -725,44 +829,56 @@ class _NewSaleState extends State<NewSale> {
         });
   }
 
-  Widget getVendorContainer() {
+  Widget getMainStockContainer() {
     return FutureBuilder<ResponseObject>(
-        future: _vendorsDataFuture,
+        future: avaDataFuture,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            var list = snapshot.data!.data.rep;
-            List<BaseModel> uList = list!.map((e) {
-              int id = e.id;
-              String name = e.name;
-              BaseModel model = BaseModel(id: id, name: name);
+            var list = snapshot.data!.data.mainStock;
+            List<MainStock> uList = list!.map((e) {
+              MainStock model = MainStock(
+                  barcode: e.barcode,
+                  createdAt: e.createdAt,
+                  cateId: e.cateId,
+                  code: e.code,
+                  cate: e.cate,
+                  qty: e.qty,
+                  unit: e.unit,
+                  cost: e.cost,
+                  lastBuy: e.lastBuy,
+                  salePrice: e.salePrice,
+                  product: e.product,
+                  id: e.id);
               return model;
             }).toList();
+            mainList = uList
+                // .where((e) => e.cateId.toString() == cateController.text)
+                .toList();
+
             if (list.isEmpty) {
               return Container();
             }
-            return DropdownSearch<BaseModel>(
+            return DropdownSearch<MainStock>(
               popupProps: PopupProps.menu(
-                itemBuilder: VendorListItemBuilder,
-                showSelectedItems: baseModel.id == 0 ? false : true,
+                itemBuilder: mainStockListItemBuilder,
+                showSelectedItems: mainStock.id == 0 ? false : true,
                 menuProps: const MenuProps(
                     elevation: 10, constraints: BoxConstraints(maxHeight: 150)),
               ),
-              items: uList,
+              items: mainList2,
               dropdownSearchDecoration: InputDecoration(
-                labelText: "vendor".tr,
+                labelText: "product".tr,
               ),
-              dropdownBuilder: vendorListItem,
+              dropdownBuilder: mainStockListItem,
               onChanged: (item) {
-                vendorController.text = item!.id.toString();
-                //  print(unitController.text);
-                vendor = item;
+                mainStock = item!;
                 setState(() {});
               },
-              selectedItem: vendor,
+              selectedItem: mainStock,
               enabled: true,
               compareFn: (i, s) => i.isEqual(s),
               validator: (text) {
-                if (text!.name.isEmpty) return "required".tr;
+                if (text!.product.isEmpty) return "required".tr;
                 return null;
               },
             );
@@ -775,11 +891,11 @@ class _NewSaleState extends State<NewSale> {
   }
 }
 
-Widget vendorListItem(BuildContext context, BaseModel? item) {
+Widget mainStockListItem(BuildContext context, MainStock? item) {
   return Container(
     child: (item?.id == 0 || item == null)
-        ? Text('select-a-vendor'.tr)
-        : ListTile(title: Text(item.name)),
+        ? Text('select-a-item'.tr)
+        : ListTile(title: Text(item.product)),
   );
 }
 
@@ -827,8 +943,8 @@ Widget CateListItemBuilder(
   );
 }
 
-Widget VendorListItemBuilder(
-    BuildContext context, BaseModel? item, bool isSelected) {
+Widget mainStockListItemBuilder(
+    BuildContext context, MainStock? item, bool isSelected) {
   return Container(
     margin: const EdgeInsets.only(top: 8, left: 8, right: 8),
     decoration: !isSelected
@@ -837,7 +953,7 @@ Widget VendorListItemBuilder(
             border: Border.all(color: Theme.of(context).primaryColor),
             borderRadius: BorderRadius.circular(5),
           ),
-    child: ListTile(title: Text("${item?.id} - ${item!.name}")),
+    child: ListTile(title: Text("${item?.code} - ${item!.product}")),
   );
 }
 
@@ -852,7 +968,7 @@ class detSale {
   final String code;
   final String name;
   final int cate;
-  final int unit;
+  final String unit;
   final String cateName;
   final String unitName;
   final double price;

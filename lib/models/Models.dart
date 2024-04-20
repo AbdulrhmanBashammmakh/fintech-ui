@@ -7,11 +7,13 @@ class Invoice {
   final double discount;
   final int flag;
   final int vendor;
+
   Invoice(
       {required this.total,
       required this.discount,
       required this.flag,
       required this.vendor});
+
   Map<String, dynamic> toJson() {
     return {
       "total": total,
@@ -19,6 +21,19 @@ class Invoice {
       "flag": flag,
       "vendor_id": vendor
     };
+  }
+}
+
+class InvoiceSale {
+  final double total;
+  final double discount;
+  final String customer;
+
+  InvoiceSale(
+      {required this.total, required this.discount, required this.customer});
+
+  Map<String, dynamic> toJson() {
+    return {"total": total, "discount": discount, "customer": customer};
   }
 }
 
@@ -30,8 +45,10 @@ class Item {
   final int cate;
   final int qty;
   final int unit;
+
   Item(this.price, this.amt, this.name, this.code, this.cate, this.qty,
       this.unit);
+
   Map<String, dynamic> toJson() {
     return {
       "cate": cate,
@@ -45,12 +62,121 @@ class Item {
   }
 }
 
+class ItemSale {
+  final double price;
+  final double amt;
+  // final String name;
+  final String code;
+  // final int cate;
+  final int qty;
+  // final int id;
+
+  ItemSale(
+      {required this.price,
+      required this.amt,
+      required this.qty,
+      required this.code});
+  // this.name, this.code, this.cate,
+  Map<String, dynamic> toJson() {
+    return {
+      // "cate": cate,
+      // "unit": unit,
+      // "name": name,
+      "code": code,
+      "price": price,
+      "qty": qty,
+      "amt": amt
+    };
+  }
+}
+
+class MainStock {
+  final int id;
+  final String code;
+  final String barcode;
+  final String createdAt;
+  final int cateId;
+  final String cate;
+
+  final double cost;
+  final double lastBuy;
+  final double salePrice;
+  final String product;
+
+  final int qty;
+  final String unit;
+
+  MainStock(
+      {required this.barcode,
+      required this.createdAt,
+      required this.cateId,
+      required this.code,
+      required this.cate,
+      required this.qty,
+      required this.unit,
+      required this.cost,
+      required this.lastBuy,
+      required this.salePrice,
+      required this.product,
+      required this.id});
+  bool isEqual(MainStock? model) {
+    return id == model?.id;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "cate": cate,
+      "unit": unit,
+      "id": id,
+      "code": code,
+      "product": product,
+      "qty": qty,
+      "barcode": barcode,
+      "cate_id": code,
+      "created_at": createdAt,
+      "last_buy": lastBuy,
+      "sale_price": salePrice,
+      "cost": cost,
+    };
+  }
+
+  factory MainStock.fromJson(Map<String, dynamic>? json) {
+    String createdAt = json?['created_at'] ?? '';
+    String code = json?['code'] ?? '';
+    String barcode = json?['barcode'] ?? '';
+    String product = json?['product'] ?? '';
+    String cate = json?['cate'] ?? '';
+    String unit = json?['unit'] ?? '';
+    int id = int.parse(json?['id']?.toString() ?? '0');
+    int cateId = int.parse(json?['cate_id']?.toString() ?? '0');
+    int qty = int.parse(json?['qty']?.toString() ?? '0');
+    double lastBuy = double.parse(json?['last_buy']?.toString() ?? '0');
+    double salePrice = double.parse(json?['sale_price']?.toString() ?? '0');
+    double cost = double.parse(json?['cost']?.toString() ?? '0');
+
+    return MainStock(
+        createdAt: createdAt,
+        id: id,
+        unit: unit,
+        qty: qty,
+        cate: cate,
+        code: code,
+        barcode: barcode,
+        cateId: cateId,
+        cost: cost,
+        lastBuy: lastBuy,
+        product: product,
+        salePrice: salePrice);
+  }
+}
+
 class TempDet {
   final double amt;
   final double price;
   final String name;
   final String code;
   final String barcode;
+
   // final String nameOwn;
   final int qty;
   final int invoice;
@@ -71,6 +197,7 @@ class TempDet {
     required this.barcode,
     required this.unit,
   });
+
   Map<String, dynamic> toJson() {
     return {
       "id": id,
@@ -143,6 +270,7 @@ class PchDet {
     required this.unit,
     required this.productId,
   });
+
   Map<String, dynamic> toJson() {
     return {
       "id": id,

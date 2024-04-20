@@ -14,7 +14,8 @@ import 'package:fintech/views/Purchases/add_purchases.dart';
 import 'package:fintech/views/Purchases/purchase_main.dart';
 import 'package:fintech/views/Purchases/purchases_list.dart';
 import 'package:fintech/views/Purchases/temp_purchases.dart';
-import 'package:fintech/views/Sales/new-sale.dart';
+import 'package:fintech/views/Sales/new-sale-view.dart';
+import 'package:fintech/views/Sales/newSaleController.dart';
 import 'package:fintech/views/Sales/sale-list.dart';
 import 'package:fintech/views/Sales/sale-main.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ import 'views/Stocks/stock-main.dart';
 
 Locale lang = window.locale;
 void main() {
+  Get.lazyPut(() => SaleController());
   runApp(const MyApp());
 }
 
@@ -182,7 +184,8 @@ final List<GetPage> pages = [
   ),
   GetPage(
     name: "/sale/insert",
-    page: () => const NewSale(),
+    page: () => NewSaleView(),
+    // page: () => const NewSale(),
   ),
   GetPage(
     name: "/ledger",
