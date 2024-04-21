@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:fintech/models/Models.dart';
 
+import '../models/Sale.dart';
+
 const String urlApi = "http://localhost:9098/myapp238/api/v1/temp/insert";
 
 Dio dio = Dio();
@@ -181,6 +183,30 @@ Future<ResponseObject> getDetTempRequest({required int parm}) async {
   }
 }
 
+Future<ResponseObject> getDetSaleRequest({required int parm}) async {
+  try {
+    final data = {
+      'parm': parm,
+    };
+    final response = await dio.post(
+      "http://localhost:9098/myapp238/api/v1/sale/details",
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      final reply = response.data;
+      //    debugPrint("reply $reply");
+      //jsonDecode(reply)
+      return ResponseObject.fromJson(reply);
+      // show_Dialog(desc: "done".tr, dialogType: 'S', context: context);
+    } else {
+      return ResponseObject.fromJson(null);
+    }
+  } catch (e) {
+    return ResponseObject.fromJson(null);
+  }
+}
+
 Future<ResponseObject> getDetPchRequest({required int parm}) async {
   try {
     final data = {
@@ -230,19 +256,41 @@ class Result {
 
 class RepRow {
   final String name;
+  final String address;
+  final String phone;
+  final String createdAt;
   final int id;
+  int active;
+  int type;
   bool isSelected = false;
 
   RepRow({
     required this.name,
     required this.id,
+    required this.active,
+    required this.type,
+    required this.createdAt,
+    required this.address,
+    required this.phone,
   });
 
   factory RepRow.fromJson(Map<String, dynamic>? json) {
     String name = json?['name'] ?? '';
+    String phone = json?['phone'] ?? '';
+    String address = json?['address'] ?? '';
+    String createdAt = json?['createdAt'] ?? '';
     int id = int.parse(json?['id']?.toString() ?? '0');
+    int active = int.parse(json?['active']?.toString() ?? '0');
+    int type = int.parse(json?['type']?.toString() ?? '0');
 
-    return RepRow(name: name, id: id);
+    return RepRow(
+        name: name,
+        id: id,
+        active: active,
+        type: type,
+        createdAt: createdAt,
+        address: address,
+        phone: phone);
   }
 }
 
@@ -253,6 +301,8 @@ class Data {
   final List<HeadModel>? heads;
   final List<PchDet>? pchDets;
   final List<MainStock>? mainStock;
+  final List<SaleHead>? saleHead;
+  final List<SaleDet>? saleDet;
 
   Data({
     required this.rep,
@@ -261,6 +311,8 @@ class Data {
     required this.heads,
     required this.pchDets,
     required this.mainStock,
+    required this.saleHead,
+    required this.saleDet,
   });
 
   factory Data.fromJson(Map<String, dynamic>? json) {
@@ -270,7 +322,9 @@ class Data {
         dets: parseDataDet(json),
         heads: parseDataHead(json),
         pchDets: parseDataPchDet(json),
-        mainStock: parseDataMainStock(json));
+        mainStock: parseDataMainStock(json),
+        saleHead: parseDataSaleHead(json),
+        saleDet: parseDataSaleDet(json));
   }
 
   static List<RepRow> parseImages(imageJson) {
@@ -324,6 +378,28 @@ class Data {
     }
     List<HeadModel> imageList =
         list.map((data) => HeadModel.fromJson(data)).toList();
+    //  debugPrint('$imageList');
+    return imageList;
+  }
+
+  static List<SaleHead> parseDataSaleHead(imageJson) {
+    var list = [];
+    if (imageJson?['head-sale-lst'] != null) {
+      list = imageJson?['head-sale-lst'] as List;
+    }
+    List<SaleHead> imageList =
+        list.map((data) => SaleHead.fromJson(data)).toList();
+    //  debugPrint('$imageList');
+    return imageList;
+  }
+
+  static List<SaleDet> parseDataSaleDet(imageJson) {
+    var list = [];
+    if (imageJson?['sale-lst'] != null) {
+      list = imageJson?['sale-lst'] as List;
+    }
+    List<SaleDet> imageList =
+        list.map((data) => SaleDet.fromJson(data)).toList();
     //  debugPrint('$imageList');
     return imageList;
   }

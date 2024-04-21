@@ -27,8 +27,16 @@ import 'views/Stocks/stock-main.dart';
 
 Locale lang = window.locale;
 void main() {
-  Get.lazyPut(() => SaleController());
+  // Get.lazyPut(() => SaleController());
   runApp(const MyApp());
+}
+
+class HomeBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut(() => SaleController());
+    Get.create(() => SaleController());
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -796,6 +804,19 @@ class LocaleString extends Translations {
   Map<String, String> arabic() {
     return {
       'add': 'أضافة',
+      'add-expenses': 'أضافة مصاريف',
+      'add-new': 'أضافة جديد',
+      'customer': 'اسم الزبون',
+      'details': 'التفاصيل',
+      'active': 'فعال',
+      'id': 'الرقم التسلسلي',
+      'createdAt': 'تاريخ الانشاء',
+      'name': 'الاسم',
+      'total': 'المجموع',
+      'cost': 'سعر التكلفة',
+      'product': 'المنتج',
+      'sales-add': 'اضافة فاتورة جديدة',
+      'select-a-item': 'اختر من العناصر المتاحة',
       'sales': 'المبيعات',
       'state': 'الحالة',
       'sale': 'المبيعات',

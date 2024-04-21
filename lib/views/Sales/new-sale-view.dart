@@ -13,13 +13,18 @@ import 'newSaleController.dart';
 
 class NewSaleView extends StatelessWidget {
   NewSaleView({super.key});
-  // var controller = Get.find<SaleController>();
+
+  // final controller = Get.find<SaleController>();
   // Get.put(SaleController());
   // var controller = Get.find<SaleController>();
+  final controller = Get.put(SaleController());
+  GlobalKey<FormState> dataEntryFormState = GlobalKey<FormState>();
+  GlobalKey<FormState> formState = GlobalKey<FormState>();
+  GlobalKey<FormState> formState2 = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<SaleController>();
-
+    // final controller =   Get.lazyPut(() => SaleController());
     var mdw = MediaQuery.of(context).size.width * 0.8;
     return Scaffold(
         appBar: AppBar(
@@ -123,7 +128,7 @@ class NewSaleView extends StatelessWidget {
                   height: 10,
                 ),
                 Form(
-                  key: controller.formState,
+                  key: formState2,
                   child: Row(
                     children: [
                       const SizedBox(
@@ -174,10 +179,12 @@ class NewSaleView extends StatelessWidget {
                             text: "add".tr,
                             icon: Icons.verified,
                             onClicked: () {
-                              Get.dialog(Dialog(
-                                child: getFormInputDetails(context,
-                                    controller: controller),
-                              ));
+                              Get.defaultDialog(
+                                  title: "",
+                                  content: Container(
+                                    child: getFormInputDetails(context,
+                                        controller: controller),
+                                  ));
                               // showCustomDialog(
                               //     context: Widget.context,
                               //     btnCancelText: 'cancel'.tr,
@@ -197,10 +204,24 @@ class NewSaleView extends StatelessWidget {
                           text: "add-invoice".tr,
                           icon: Icons.verified,
                           onClicked: () async {
-                            Get.dialog(Dialog(
-                              child: setCustomerAndDiscount(context,
-                                  controller: controller),
-                            ));
+                            // Get.dialog(Container(
+                            //   width: MediaQuery.of(context).size.width * .8,
+                            //   height: MediaQuery.of(context).size.height * .5,
+                            //   child: Dialog(
+                            //     child: setCustomerAndDiscount(context,
+                            //         controller: controller),
+                            //   ),
+                            // )
+                            // );
+                            Get.defaultDialog(
+                                title: '',
+                                content: Container(
+                                  width: MediaQuery.of(context).size.width * .8,
+                                  height:
+                                      MediaQuery.of(context).size.height * .5,
+                                  child: setCustomerAndDiscount(context,
+                                      controller: controller),
+                                ));
                             // show_Dialog(
                             //   context: context,
                             //   cancelPress: () {
@@ -301,95 +322,6 @@ class NewSaleView extends StatelessWidget {
                 ),
               ],
             ),
-            // child: AdaptiveScrollbar(
-            //   controller: controller.verticalScrollController,
-            //   width: controller.scrollWidth,
-            //   scrollToClickDelta: 75,
-            //   scrollToClickFirstDelay: 200,
-            //   scrollToClickOtherDelay: 50,
-            //   sliderDecoration: controller.sliderDecoration,
-            //   sliderActiveDecoration: controller.sliderActiveDecoration,
-            //   underDecoration: controller.underDecoration,
-            //   child: AdaptiveScrollbar(
-            //     controller: controller.horizontalScrollController,
-            //     underSpacing: EdgeInsets.only(bottom: controller.scrollWidth),
-            //     width: controller.scrollWidth,
-            //     position: ScrollbarPosition.bottom,
-            //     sliderDecoration: controller.sliderDecoration,
-            //     sliderActiveDecoration: controller.sliderActiveDecoration,
-            //     underDecoration: controller.underDecoration,
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //       children: <Widget>[
-            //         Expanded(
-            //           child: ScrollConfiguration(
-            //             behavior: ScrollConfiguration.of(context)
-            //                 .copyWith(scrollbars: false),
-            //             child: SingleChildScrollView(
-            //               controller: controller.verticalScrollController,
-            //               scrollDirection: Axis.vertical,
-            //               child: SingleChildScrollView(
-            //                 controller: controller.horizontalScrollController,
-            //                 scrollDirection: Axis.horizontal,
-            //                 child: Container(
-            //                     padding: EdgeInsets.symmetric(
-            //                         horizontal: controller.scrollWidth),
-            //                     child: GetBuilder<SaleController>(
-            //                         //  init: SaleController(),
-            //                         builder: (controller) {
-            //                       return DataTable(
-            //                         showBottomBorder: true,
-            //                         sortAscending: controller.isAscending,
-            //                         sortColumnIndex: controller.sortColumnIndex,
-            //                         columns: controller
-            //                             .getColumns(controller.columns),
-            //                         horizontalMargin: 10,
-            //                         rows: controller.dataRequest
-            //                             .map(
-            //                               (data) => DataRow(
-            //                                 cells: <DataCell>[
-            //                                   DataCell(ElevatedButton(
-            //                                       onPressed: () {
-            //                                         controller.dataRequest
-            //                                             .remove(data);
-            //                                         sumInvoice();
-            //                                         controller.getDataRequest();
-            //                                         controller
-            //                                             .getListShowRemoved(
-            //                                                 data.code);
-            //                                       },
-            //                                       style: ButtonStyle(
-            //                                         backgroundColor:
-            //                                             MaterialStateProperty
-            //                                                 .all(
-            //                                                     secondaryColor),
-            //                                       ),
-            //                                       child: Text('delete'.tr))),
-            //                                   DataCell(Text(data.cateName)),
-            //                                   DataCell(Text(data.code)),
-            //                                   DataCell(Text(data.name)),
-            //                                   DataCell(
-            //                                       Text(data.qty.toString())),
-            //                                   DataCell(
-            //                                       Text(data.price.toString())),
-            //                                   DataCell(
-            //                                       Text(data.amount.toString())),
-            //                                   DataCell(Text(data.unit)),
-            //                                   DataCell(Text(data.code)),
-            //                                 ],
-            //                               ),
-            //                             )
-            //                             .toList(),
-            //                       );
-            //                     })),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ),
         ),
       ),
@@ -400,127 +332,140 @@ class NewSaleView extends StatelessWidget {
     return ElevatedButton(
       child: Text("yes".tr),
       onPressed: () async {
-        var inv = InvoiceSale(
-            total: double.parse(controller.amountController.text),
-            discount: double.parse(controller.discountController.text),
-            customer: controller.customerController.text);
-        List<ItemSale> itm = [];
-        for (var e in controller.dataRequest) {
-          itm.add(ItemSale(
-              qty: e.qty, code: e.code, price: e.price, amt: e.amount));
-        }
-        dismissDialog(context: context);
-        int x = await sendPostRequestSales(myList: itm, myObject: inv);
-        debugPrint("$x");
-        if (x == 1) {
-          controller.amountController.text = '0';
-          controller.dataRequest.clear();
-          //    controller.amountController.dispose();
-          // controller.complete = true;
-          Get.toNamed("/sale");
-          controller.close();
-        } else {
-          // show_Dialog(desc: "no".tr, dialogType: 'E', context: context);
-        }
+        Get.defaultDialog(
+            content: Text('هل انت متأكد من اصدار الفاتورة'),
+            onConfirm: () async {
+              var inv = InvoiceSale(
+                  total: double.parse(controller.amountController.text),
+                  discount: double.parse(controller.discountController.text),
+                  customer: controller.customerController.text);
+              List<ItemSale> itm = [];
+              for (var e in controller.dataRequest) {
+                itm.add(ItemSale(
+                    qty: e.qty, code: e.code, price: e.price, amt: e.amount));
+              }
+              dismissDialog(context: context);
+              int x = await sendPostRequestSales(myList: itm, myObject: inv);
+              debugPrint("$x");
+              if (x == 1) {
+                controller.amountController.text = '0';
+                controller.dataRequest.clear();
+                controller.finish();
+                // controller.complete = true;
+                Get.toNamed("/sale");
+                //  controller.close();
+              } else {
+                // show_Dialog(desc: "no".tr, dialogType: 'E', context: context);
+              }
+            },
+            onCancel: () {},
+            title: "تأكيد العملية",
+            // confirm: Text('ok'.tr),
+            // cancel: Text('cancel'.tr)
+            confirmTextColor: Colors.white);
       },
     );
   }
 
   setCustomerAndDiscount(context, {controller}) {
-    return Form(
-        key: controller.formState,
-        child: GetBuilder<SaleController>(
-          init: SaleController(),
-          builder: (controller) {
-            return Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  margin: const EdgeInsets.only(bottom: 15),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'اخر خطوة'.tr,
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          fontStyle: FontStyle.italic,
-                          decoration: TextDecoration.underline,
-                          fontSize: 20,
-                        ),
+    return Container(
+      width: MediaQuery.of(context).size.width * .8,
+      height: MediaQuery.of(context).size.height * .5,
+      child: Form(
+          key: formState,
+          child: GetBuilder<SaleController>(
+            init: SaleController(),
+            builder: (controller) {
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.only(bottom: 15),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'اخر خطوة'.tr,
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontStyle: FontStyle.italic,
+                            decoration: TextDecoration.underline,
+                            fontSize: 20,
+                          ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        child: TextFormField(
-                          controller: controller.amountController,
-                          decoration: InputDecoration(
-                            label: Text("total".tr),
-                            counterText: "",
-                          ),
-                          enabled: false,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        child: TextFormField(
-                          controller: controller.discountController,
-                          decoration: InputDecoration(
-                            label: Text("discount".tr),
-                            // counterText: "0",
-                          ),
-                          validator: (text) {
-                            if (!isNumeric(text!)) return "numbers-only".tr;
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        child: TextFormField(
-                          controller: controller.customerController,
-                          decoration: InputDecoration(
-                            label: Text("customer".tr),
-                            counterText: "",
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          child: TextFormField(
+                            controller: controller.amountController,
+                            decoration: InputDecoration(
+                              label: Text("total".tr),
+                              counterText: "",
+                            ),
+                            enabled: false,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        child: confirmButton(context, controller: controller),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          child: TextFormField(
+                            controller: controller.discountController,
+                            decoration: InputDecoration(
+                              label: Text("discount".tr),
+                              // counterText: "0",
+                            ),
+                            validator: (text) {
+                              if (!isNumeric(text!)) return "numbers-only".tr;
+                              return null;
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        child: SizedBox(width: 10),
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          child: TextFormField(
+                            controller: controller.customerController,
+                            decoration: InputDecoration(
+                              label: Text("customer".tr),
+                              counterText: "",
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ));
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          child: confirmButton(context, controller: controller),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          child: SizedBox(width: 10),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          )),
+    );
   }
 
   getFormInputDetails(context, {controller}) {
     reset(controller: controller);
     return Form(
-        key: controller.dataEntryFormState,
+        key: dataEntryFormState,
         child: GetBuilder<SaleController>(
           init: SaleController(),
           builder: (controller) {
@@ -666,8 +611,7 @@ class NewSaleView extends StatelessWidget {
                             text: "add".tr,
                             icon: Icons.add,
                             onClicked: () {
-                              if (controller.dataEntryFormState.currentState!
-                                  .validate()) {
+                              if (dataEntryFormState.currentState!.validate()) {
                                 double pr = double.parse(
                                     controller.priceController.text);
                                 int qt =

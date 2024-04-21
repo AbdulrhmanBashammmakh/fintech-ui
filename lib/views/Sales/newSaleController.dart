@@ -27,8 +27,10 @@ class SaleController extends GetxController {
       salePrice: 0,
       product: '',
       id: 0);
-  GlobalKey<FormState> dataEntryFormState = GlobalKey<FormState>();
-  GlobalKey<FormState> formState = GlobalKey<FormState>();
+
+  // GlobalKey<FormState> dataEntryFormState = GlobalKey<FormState>();
+  // GlobalKey<FormState> formState = GlobalKey<FormState>();
+  // GlobalKey<FormState> formState2 = GlobalKey<FormState>();
   TextEditingController amountController = TextEditingController();
   TextEditingController discountController = TextEditingController();
   TextEditingController customerController = TextEditingController();
@@ -129,6 +131,15 @@ class SaleController extends GetxController {
     toDateController.dispose();
 
     super.onClose();
+  }
+
+  finish() {
+    discountController.text = 0.0.toString();
+    customerController.text = '';
+    avaDataFuture = getInvRequestPost(
+        fullUrl: "http://localhost:9098/myapp238/api/v1/stock/available");
+    a = 1;
+    refreshItems();
   }
 
   @override

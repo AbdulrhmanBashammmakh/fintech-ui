@@ -1,13 +1,11 @@
 import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
-import 'package:fintech/models/Models.dart';
 import 'package:fintech/utils/AColors.dart';
-import 'package:fintech/utils/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../endPoint/send-req.dart';
-import '../../models/BaseModel.dart';
 import '../../models/Sale.dart';
+import '../../utils/AjustScroll.dart' as h;
 import '../../widgets/button_main.dart';
 
 class SaleList extends StatefulWidget {
@@ -19,14 +17,8 @@ class SaleList extends StatefulWidget {
 
 class _SaleListState extends State<SaleList> {
   Future<ResponseObject>? saleDataFuture;
-  Future<ResponseObject>? _units;
-  Future<ResponseObject>? _vendorsDataFuture;
-  Future<ResponseObject>? _catesDataFuture;
   Future<List<SaleHead>?>? listOfSale;
-  String urlUnit = ApiEndPoint.URL + ApiEndPoint.UnitMainAll;
-  String urlVendor = ApiEndPoint.URL + ApiEndPoint.VendorMainAll;
-  String urlCate = ApiEndPoint.URL + ApiEndPoint.CateMainAll;
-  List<TempDet> list = [];
+  List<SaleDet> list = [];
   List<String> columns = [
     // 'update'.tr,
     // 'delete'.tr,
@@ -41,11 +33,13 @@ class _SaleListState extends State<SaleList> {
   ];
 
   TextEditingController amountController = TextEditingController();
+  TextEditingController disController = TextEditingController();
+  TextEditingController customerController = TextEditingController();
   TextEditingController stateController = TextEditingController();
   TextEditingController vendorController = TextEditingController();
   TextEditingController dateInvoiceController = TextEditingController();
   TextEditingController idController = TextEditingController();
-
+  final ScrollController verticalScrollController = ScrollController();
   final ScrollController _verticalScrollController = ScrollController();
   final ScrollController _horizontalScrollController = ScrollController();
   final BoxDecoration sliderDecoration = BoxDecoration(
@@ -71,10 +65,6 @@ class _SaleListState extends State<SaleList> {
           ))
       .toList();
 
-  List<BaseModel> uList = <BaseModel>[];
-  List<BaseModel> cateList = <BaseModel>[];
-  List<BaseModel> vendorList = <BaseModel>[];
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -87,109 +77,22 @@ class _SaleListState extends State<SaleList> {
     super.initState();
   }
 
-  // getaAll() async {
-  //   try {
-  //     final value = await _unitsDataFuture;
-  //     final value2 = value?.data.rep!.toList();
-  //     value2?.forEach((e) {
-  //       cateList.add(BaseModel(id: e.id, name: e.name));
-  //     });
-  //     debugPrint("${cateList.length}");
-  //   } catch (e) {
-  //     debugPrint("sth cates");
-  //   }
-  //
-  //   try {
-  //     final value = await _vendorsDataFuture;
-  //     final value2 = value?.data.rep!.toList();
-  //     value2?.forEach((e) {
-  //       vendorList.add(BaseModel(id: e.id, name: e.name));
-  //     });
-  //     debugPrint("${vendorList.length}");
-  //   } catch (e) {
-  //     debugPrint("sth cates");
-  //   }
-  //   try {
-  //     final value = await _units;
-  //     final value2 = value?.data.rep!.toList();
-  //     value2?.forEach((e) {
-  //       uList.add(BaseModel(id: e.id, name: e.name));
-  //     });
-  //     debugPrint("${uList.length}");
-  //   } catch (e) {
-  //     debugPrint("sth cates");
-  //   }
-  //
-  //   // _vendorsDataFuture?.then((value) => value.data.rep?.forEach((e) {
-  //   //       vendorList.add(BaseModel(id: e.id, name: e.name));
-  //   //     }));
-  //   //
-  //   // _units?.then((value) => value.data.rep?.forEach((e) {
-  //   //       uList.add(BaseModel(id: e.id, name: e.name));
-  //   //       debugPrint("${e.name}");
-  //   //     }));
-  //   //
-  //   // debugPrint("${uList.length}");
-  //   // _catesDataFuture?.then((value) => value.data.rep?.forEach((e) {
-  //   //       cateList.add(BaseModel(id: e.id, name: e.name));
-  //   //     }));
-  // }
-
-  ElevatedButton confirmButton({createdAt, id, vendorId, state, total}) {
+  ElevatedButton confirmButton({createdAt, id, customer, disc, total}) {
     return ElevatedButton(
       child: Text("yes".tr),
       onPressed: () async {
         debugPrint("${id}");
-        //  var det = await getDetTempRequest(parm: id);
-        // det.data.dets!.length;
+        var det = await getDetSaleRequest(parm: id);
         idController.text = id.toString();
-        //  debugPrint("${det.data.dets!.length}");
         dateInvoiceController.text = createdAt;
-        //  var ven = getVendor(vendorId);
-        //  vendorController.text = ven;
-        stateController.text = state == 0 ? "مؤقته" : "معتمدة";
         amountController.text = total.toString();
+        customerController.text = customer;
+        disController.text = disc;
         dismissDialog(context: context);
-        //   list = det.data.dets!;
+        list = det.data.saleDet!;
         setState(() {});
       },
     );
-  }
-
-  String getCate(int id) {
-    if (id > 0) {
-      BaseModel x = cateList.where((e) => e.id == id).first;
-      if (x.name.isEmpty) {
-        return "";
-      } else {
-        return x.name;
-      }
-    }
-    return '';
-  }
-
-  String getVendor(int id) {
-    if (id > 0) {
-      BaseModel x = vendorList.where((e) => e.id == id).first;
-      if (x.name.isEmpty) {
-        return "";
-      } else {
-        return x.name;
-      }
-    }
-    return '';
-  }
-
-  String getUnit(int id) {
-    if (id > 0) {
-      BaseModel x = uList.where((e) => e.id == id).first;
-      if (x.name.isEmpty) {
-        return "";
-      } else {
-        return x.name;
-      }
-    }
-    return '';
   }
 
   Widget detailsInvoice() {
@@ -253,7 +156,7 @@ class _SaleListState extends State<SaleList> {
                                         cells: <DataCell>[
                                           DataCell(Text(data.cate.toString())),
                                           DataCell(Text(data.code)),
-                                          DataCell(Text(data.name)),
+                                          DataCell(Text(data.product)),
                                           DataCell(Text(data.qty.toString())),
                                           DataCell(Text(data.price.toString())),
                                           DataCell(Text(data.amt.toString())),
@@ -313,7 +216,7 @@ class _SaleListState extends State<SaleList> {
                     margin: const EdgeInsets.all(5),
                     child: TextFormField(
                       enabled: false,
-                      controller: vendorController,
+                      controller: disController,
                       decoration: InputDecoration(
                         label: Text("discount".tr),
                         counterText: "",
@@ -391,99 +294,120 @@ class _SaleListState extends State<SaleList> {
               ],
             ),
             Divider(thickness: 1, color: notUpdtblColor),
-            Center(
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Container(
-                    padding: const EdgeInsets.all(5),
-                    margin: const EdgeInsets.all(5),
-                    child: FutureBuilder<ResponseObject>(
-                      future: saleDataFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          final units = (snapshot.data!.data.heads);
-                          return units!.isEmpty
-                              ? Card(
-                                  child: Center(
-                                      child:
-                                          Container(child: Text("Not things"))),
-                                )
-                              : ListView.builder(
-                                  itemCount: units!.length,
-                                  itemBuilder: (context, index) {
-                                    final unit = units[index];
-                                    debugPrint("reply ${unit!.total}");
-                                    return GestureDetector(
-                                      onTap: () {
-                                        show_Dialog(
-                                          context: context,
-                                          cancelPress: () {
-                                            dismissDialog();
-                                          },
-                                          btnOkText: "ok".tr,
-                                          btnCancelText: 'cancel'.tr,
-                                          btnOk: confirmButton(
-                                              vendorId: unit!.id,
-                                              state: 1,
-                                              total: unit.total,
-                                              id: unit.id,
-                                              createdAt: unit.createdAt),
-                                          dialogType: "Q",
-                                          title:
-                                              "  هل تريد اظهار بيانات الفاتورة",
-                                          desc: " رقم${unit.id} ",
-                                        );
+            Row(
+              children: [
+                Expanded(
+                    child: Container(
+                  padding: const EdgeInsets.all(5),
+                  margin: const EdgeInsets.all(5),
+                  child: FutureBuilder<ResponseObject>(
+                    future: saleDataFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final units =
+                            (snapshot.data!.data.saleHead ?? []).toList();
+                        debugPrint("reply ${units.length}");
+                        return units.isEmpty
+                            ? Card(
+                                child: Center(
+                                    child:
+                                        Container(child: Text("Not things"))),
+                              )
+                            : SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                controller: verticalScrollController,
+                                child: Container(
+                                  height: mdh - 100,
+                                  child: ListView.builder(
+                                    //reverse: true,
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    itemCount: units.length,
+                                    controller:
+                                        h.AdjustableScrollController(80),
+                                    physics: ScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      final unit = units[index];
+                                      debugPrint("reply ${unit.total}");
+                                      return GestureDetector(
+                                        onTap: () {
+                                          show_Dialog(
+                                            context: context,
+                                            cancelPress: () {
+                                              dismissDialog();
+                                            },
+                                            btnOkText: "ok".tr,
+                                            btnCancelText: 'cancel'.tr,
+                                            btnOk: confirmButton(
+                                                customer: unit.customer,
+                                                total: unit.total,
+                                                disc: unit.discount.toString(),
+                                                id: unit.id,
+                                                createdAt: unit.createdAt),
+                                            dialogType: "Q",
+                                            title:
+                                                "  هل تريد اظهار بيانات الفاتورة",
+                                            desc: " رقم${unit.id} ",
+                                          );
 
-                                        setState(() {});
-                                      },
-                                      child: Card(
-                                          child: ListTile(
-                                        title: Text('${unit!.total} ريال'),
-                                        subtitle: Text(unit.createdAt),
-                                        trailing: Text(unit.id.toString()),
-                                        leading:
-                                            Icon(Icons.credit_score_rounded),
-                                      )),
-                                    );
-                                  },
-                                );
-                        } else if (snapshot.hasError) {
-                          return Center(child: Text("حدث خطأ"));
-                        } else {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                      },
-                    ),
-                  )),
-                  Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(5),
-                            margin: const EdgeInsets.all(5),
-                            height: mdh / 4.5,
-                            width: mdw,
-                            child: Card(
-                              color: AColors.Silver,
-                              child: headInvoice(),
-                            ),
+                                          // setState(() {});
+                                        },
+                                        child: Card(
+                                            child: ListTile(
+                                          title: Text('${unit.total} ريال'),
+                                          subtitle: Text(unit.createdAt),
+                                          trailing: Text(unit.id.toString()),
+                                          leading:
+                                              Icon(Icons.credit_score_rounded),
+                                        )),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text("حدث خطأ"));
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                )),
+                Expanded(
+                    flex: 3,
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                margin: const EdgeInsets.all(5),
+                                height: mdh / 4.5,
+                                width: mdw,
+                                child: Card(
+                                  color: AColors.Silver,
+                                  child: headInvoice(),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                margin: const EdgeInsets.all(5),
+                                height: mdh - (mdh / 4) - 100,
+                                width: mdw,
+                                child: Card(
+                                  color: AColors.Silver,
+                                  child: detailsInvoice(),
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(5),
-                            margin: const EdgeInsets.all(5),
-                            height: mdh - (mdh / 4) - 100,
-                            width: mdw,
-                            child: Card(
-                              color: AColors.Silver,
-                              child: detailsInvoice(),
-                            ),
-                          ),
-                        ],
-                      )),
-                ],
-              ),
+                        ),
+                      ],
+                    )),
+              ],
             ),
           ],
         ));
