@@ -146,9 +146,9 @@ class _AccountPageState extends State<AccountPage> {
                     margin: const EdgeInsets.all(5),
                     child: TextFormField(
                       enabled: false,
-                      controller: phoneController,
+                      controller: idController,
                       decoration: InputDecoration(
-                        label: Text("phone".tr),
+                        label: Text("id".tr),
                         counterText: "",
                       ),
                     ),
@@ -160,9 +160,9 @@ class _AccountPageState extends State<AccountPage> {
                     margin: const EdgeInsets.all(5),
                     child: TextFormField(
                       enabled: false,
-                      controller: addressController,
+                      controller: dateInvoiceController,
                       decoration: InputDecoration(
-                        label: Text("address".tr),
+                        label: Text("date".tr),
                         counterText: "",
                       ),
                     ),
@@ -275,8 +275,7 @@ class _AccountPageState extends State<AccountPage> {
                                                 id: unit.id,
                                                 createdAt: unit.createdAt),
                                             dialogType: "Q",
-                                            title:
-                                                "  هل تريد اظهار بيانات الفاتورة",
+                                            title: "do-need-appear-info".tr,
                                             desc: " رقم${unit.id} ",
                                           );
 

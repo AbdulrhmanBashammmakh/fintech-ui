@@ -225,35 +225,38 @@ class _AddPurchasesState extends State<AddPurchases> {
         body: ListView(
           //  controller: _controller,
           children: [
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: Container(
-            //           padding: const EdgeInsets.all(5),
-            //           margin: const EdgeInsets.all(5),
-            //           child: ButtonWidget(
-            //             text: 'home-page'.tr,
-            //             icon: Icons.home,
-            //             onClicked: () {
-            //               Get.toNamed('/');
-            //               //  Get.to('/');
-            //             },
-            //           )),
-            //     ),
-            //     Expanded(child: SizedBox()),
-            //     Expanded(child: SizedBox()),
-            //     Expanded(
-            //       child: Container(
-            //           padding: const EdgeInsets.all(5),
-            //           margin: const EdgeInsets.all(5),
-            //           child: ButtonWidget(
-            //             text: 'back'.tr,
-            //             icon: Icons.arrow_back,
-            //             onClicked: () {},
-            //           )),
-            //     ),
-            //   ],
-            // ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: ButtonWidget(
+                        text: 'home-page'.tr,
+                        icon: Icons.home,
+                        onClicked: () {
+                          Get.toNamed('/');
+                          //  Get.to('/');
+                        },
+                      )),
+                ),
+                Expanded(child: SizedBox()),
+                Expanded(child: SizedBox()),
+                Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: ButtonWidget(
+                        text: 'back'.tr,
+                        icon: Icons.arrow_back,
+                        onClicked: () {
+                          Get.toNamed('/purchase');
+                        },
+                      )),
+                ),
+              ],
+            ),
+            Divider(thickness: 1, color: notUpdtblColor),
 
             complete ? completeFunc() : mainFunc()
             // DataRequest.length > 0 ? EndInvoice() : Container()
@@ -285,7 +288,7 @@ class _AddPurchasesState extends State<AddPurchases> {
                 height: 10,
               ),
               Container(
-                child: Text("قيمة الفاتورة"),
+                child: Text("value-invoice".tr),
                 padding: const EdgeInsets.all(5),
                 margin: const EdgeInsets.all(5),
               ),
@@ -340,7 +343,7 @@ class _AddPurchasesState extends State<AddPurchases> {
                 const SizedBox(
                   height: 5,
                 ),
-                Container(child: Text("راس الفاتورة")),
+                Container(child: Text("head-invoice".tr)),
                 const SizedBox(
                   height: 10,
                 ),
@@ -434,8 +437,8 @@ class _AddPurchasesState extends State<AddPurchases> {
                         margin: const EdgeInsets.all(5),
                         width: mdw / 3,
                         child: ButtonWidget(
-                            text: "add".tr,
-                            icon: Icons.verified,
+                            text: "add-to-invoice".tr,
+                            icon: Icons.add_box_sharp,
                             onClicked: () {
                               showCustomDialog(
                                   context: context,
@@ -448,29 +451,31 @@ class _AddPurchasesState extends State<AddPurchases> {
                                   width: mdw);
                             }))),
                 Spacer(),
-                Expanded(
-                  child: Container(
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.all(5),
-                      width: mdw / 3,
-                      child: ButtonWidget(
-                          text: "add-invoice".tr,
-                          icon: Icons.verified,
-                          onClicked: () async {
-                            show_Dialog(
-                              context: context,
-                              cancelPress: () {
-                                dismissDialog();
-                              },
-                              btnOkText: "ok".tr,
-                              btnCancelText: 'cancel'.tr,
-                              btnOk: confirmButton(),
-                              dialogType: "Q",
-                              title: "هل تريد الاستمرار",
-                              desc: "هل تريد اضافة الفاتورة",
-                            );
-                          })),
-                )
+                amountController.text != 0.0.toString()
+                    ? Expanded(
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            width: mdw / 3,
+                            child: ButtonWidget(
+                                text: "add-invoice".tr,
+                                icon: Icons.verified,
+                                onClicked: () async {
+                                  show_Dialog(
+                                    context: context,
+                                    cancelPress: () {
+                                      dismissDialog();
+                                    },
+                                    btnOkText: "ok".tr,
+                                    btnCancelText: 'cancel'.tr,
+                                    btnOk: confirmButton(),
+                                    dialogType: "Q",
+                                    title: "do-u-continue".tr,
+                                    desc: "do-add-invoice".tr,
+                                  );
+                                })),
+                      )
+                    : Spacer()
               ],
             ),
             const SizedBox(
@@ -802,7 +807,7 @@ class _AddPurchasesState extends State<AddPurchases> {
                   child: Container(
                     margin: const EdgeInsets.all(5),
                     child: ButtonWidget(
-                        text: "add".tr,
+                        text: "add-to-invoice".tr,
                         icon: Icons.add,
                         onClicked: () {
                           if (dataEntryFormState.currentState!.validate()) {

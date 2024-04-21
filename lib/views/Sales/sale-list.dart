@@ -81,10 +81,10 @@ class _SaleListState extends State<SaleList> {
     return ElevatedButton(
       child: Text("yes".tr),
       onPressed: () async {
-        debugPrint("${id}");
+        debugPrint("$id");
         var det = await getDetSaleRequest(parm: id);
         idController.text = id.toString();
-        dateInvoiceController.text = createdAt;
+        dateInvoiceController.text = createdAt.toString();
         amountController.text = total.toString();
         customerController.text = customer;
         disController.text = disc;
@@ -106,7 +106,7 @@ class _SaleListState extends State<SaleList> {
           Container(
             height: 40,
             width: mdw / 2,
-            child: Card(child: Center(child: Text("تفاصيل الفاتورة"))),
+            child: Card(child: Center(child: Text("det-invoice".tr))),
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.all(5),
           ),
@@ -191,7 +191,7 @@ class _SaleListState extends State<SaleList> {
           child: ListView(
             children: <Widget>[
               Container(
-                child: Text("قيمة الفاتورة"),
+                child: Text("value-invoice".tr),
                 padding: const EdgeInsets.all(5),
                 margin: const EdgeInsets.all(5),
               ),
@@ -310,8 +310,8 @@ class _SaleListState extends State<SaleList> {
                         return units.isEmpty
                             ? Card(
                                 child: Center(
-                                    child:
-                                        Container(child: Text("Not things"))),
+                                    child: Container(
+                                        child: Text("not-things".tr))),
                               )
                             : SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
@@ -328,7 +328,7 @@ class _SaleListState extends State<SaleList> {
                                     physics: ScrollPhysics(),
                                     itemBuilder: (context, index) {
                                       final unit = units[index];
-                                      debugPrint("reply ${unit.total}");
+                                      //  debugPrint("reply ${unit.total}");
                                       return GestureDetector(
                                         onTap: () {
                                           show_Dialog(
@@ -345,16 +345,16 @@ class _SaleListState extends State<SaleList> {
                                                 id: unit.id,
                                                 createdAt: unit.createdAt),
                                             dialogType: "Q",
-                                            title:
-                                                "  هل تريد اظهار بيانات الفاتورة",
-                                            desc: " رقم${unit.id} ",
+                                            title: "do-show-invoice".tr,
+                                            desc: "${'number'.tr}${unit.id} ",
                                           );
 
                                           // setState(() {});
                                         },
                                         child: Card(
                                             child: ListTile(
-                                          title: Text('${unit.total} ريال'),
+                                          title: Text(
+                                              '${unit.total} ${'rial'.tr}'),
                                           subtitle: Text(unit.createdAt),
                                           trailing: Text(unit.id.toString()),
                                           leading:
@@ -366,7 +366,7 @@ class _SaleListState extends State<SaleList> {
                                 ),
                               );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text("حدث خطأ"));
+                        return Center(child: Text("sth-wrong".tr));
                       } else {
                         return Center(child: CircularProgressIndicator());
                       }

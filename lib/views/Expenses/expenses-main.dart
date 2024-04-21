@@ -95,7 +95,7 @@ class _ExpensesMainState extends State<ExpensesMain> {
     return ElevatedButton(
       child: Text("yes".tr),
       onPressed: () async {
-        debugPrint("${id}");
+        debugPrint("$id");
         // var det = await getDetSaleRequest(parm: id);
         idController.text = id.toString();
         dateInvoiceController.text = createdAt;
@@ -111,95 +111,101 @@ class _ExpensesMainState extends State<ExpensesMain> {
 
   Widget detailsInvoice() {
     var mdw = MediaQuery.of(context).size.width * 0.9;
-    return Container(
-      padding: const EdgeInsets.all(5),
-      margin: const EdgeInsets.all(5),
-      //  width: mdw,
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        margin: const EdgeInsets.all(5),
-        //  width: mdw,
-        child: Center(
-          child: Card(
-            child: AdaptiveScrollbar(
-              controller: _verticalScrollController,
-              width: scrollWidth,
-              scrollToClickDelta: 75,
-              scrollToClickFirstDelay: 200,
-              scrollToClickOtherDelay: 50,
-              sliderDecoration: sliderDecoration,
-              sliderActiveDecoration: sliderActiveDecoration,
-              underDecoration: underDecoration,
+    return ListView(
+      children: [
+        Container(
+          height: 40,
+          width: mdw / 2,
+          child: Card(child: Center(child: Text("det-expenses".tr))),
+          padding: const EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
+        ),
+        Container(
+          padding: const EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
+          //  width: mdw,
+          child: Center(
+            child: Card(
               child: AdaptiveScrollbar(
-                controller: _horizontalScrollController,
-                underSpacing: EdgeInsets.only(bottom: scrollWidth),
+                controller: _verticalScrollController,
                 width: scrollWidth,
-                position: ScrollbarPosition.bottom,
+                scrollToClickDelta: 75,
+                scrollToClickFirstDelay: 200,
+                scrollToClickOtherDelay: 50,
                 sliderDecoration: sliderDecoration,
                 sliderActiveDecoration: sliderActiveDecoration,
                 underDecoration: underDecoration,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Expanded(
-                      child: ScrollConfiguration(
-                        behavior: ScrollConfiguration.of(context)
-                            .copyWith(scrollbars: false),
-                        child: SingleChildScrollView(
-                          controller: _verticalScrollController,
-                          scrollDirection: Axis.vertical,
+                child: AdaptiveScrollbar(
+                  controller: _horizontalScrollController,
+                  underSpacing: EdgeInsets.only(bottom: scrollWidth),
+                  width: scrollWidth,
+                  position: ScrollbarPosition.bottom,
+                  sliderDecoration: sliderDecoration,
+                  sliderActiveDecoration: sliderActiveDecoration,
+                  underDecoration: underDecoration,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Expanded(
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context)
+                              .copyWith(scrollbars: false),
                           child: SingleChildScrollView(
-                            controller: _horizontalScrollController,
-                            scrollDirection: Axis.horizontal,
-                            child: Container(
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: scrollWidth),
-                              child: DataTable(
-                                showBottomBorder: true,
-                                sortAscending: isAscending,
-                                sortColumnIndex: sortColumnIndex,
-                                columns: getColumns(columns),
-                                horizontalMargin: 10,
-                                rows: list
-                                    .map(
-                                      (data) => DataRow(
-                                        cells: <DataCell>[
-                                          // DataCell(ElevatedButton(
-                                          //     onPressed: () {
-                                          //       list.remove(data);
-                                          //
-                                          //       setState(() {});
-                                          //     },
-                                          //     style: ButtonStyle(
-                                          //       backgroundColor:
-                                          //           MaterialStateProperty.all(
-                                          //               secondaryColor),
-                                          //     ),
-                                          //     child: Text('delete'.tr))),
-                                          DataCell(Text(data.id.toString())),
-                                          DataCell(Text(data.phone)),
-                                          DataCell(Text(data.name)),
-                                          DataCell(Text(data.address)),
-                                          DataCell(
-                                              Text(data.active.toString())),
-                                          DataCell(Text(data.createdAt)),
-                                        ],
-                                      ),
-                                    )
-                                    .toList(),
+                            controller: _verticalScrollController,
+                            scrollDirection: Axis.vertical,
+                            child: SingleChildScrollView(
+                              controller: _horizontalScrollController,
+                              scrollDirection: Axis.horizontal,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: scrollWidth),
+                                child: DataTable(
+                                  showBottomBorder: true,
+                                  sortAscending: isAscending,
+                                  sortColumnIndex: sortColumnIndex,
+                                  columns: getColumns(columns),
+                                  horizontalMargin: 10,
+                                  rows: list
+                                      .map(
+                                        (data) => DataRow(
+                                          cells: <DataCell>[
+                                            // DataCell(ElevatedButton(
+                                            //     onPressed: () {
+                                            //       list.remove(data);
+                                            //
+                                            //       setState(() {});
+                                            //     },
+                                            //     style: ButtonStyle(
+                                            //       backgroundColor:
+                                            //           MaterialStateProperty.all(
+                                            //               secondaryColor),
+                                            //     ),
+                                            //     child: Text('delete'.tr))),
+                                            DataCell(Text(data.id.toString())),
+                                            DataCell(Text(data.phone)),
+                                            DataCell(Text(data.name)),
+                                            DataCell(Text(data.address)),
+                                            DataCell(
+                                                Text(data.active.toString())),
+                                            DataCell(Text(data.createdAt)),
+                                          ],
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -245,7 +251,9 @@ class _ExpensesMainState extends State<ExpensesMain> {
                       child: ButtonWidget(
                         text: 'back'.tr,
                         icon: Icons.arrow_back,
-                        onClicked: () {},
+                        onClicked: () {
+                          Get.toNamed('/');
+                        },
                       )),
                 ),
               ],
@@ -264,7 +272,7 @@ class _ExpensesMainState extends State<ExpensesMain> {
                                 margin: const EdgeInsets.all(5),
                                 child: ButtonWidget(
                                   text: 'add-expenses'.tr,
-                                  icon: Icons.arrow_back,
+                                  icon: Icons.add_box_sharp,
                                   onClicked: () {},
                                 )),
                           ],

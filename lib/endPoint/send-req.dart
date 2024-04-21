@@ -278,7 +278,7 @@ class RepRow {
     String name = json?['name'] ?? '';
     String phone = json?['phone'] ?? '';
     String address = json?['address'] ?? '';
-    String createdAt = json?['createdAt'] ?? '';
+    String createdAt = json?['createdAt'] ?? (json?['created_at'] ?? '');
     int id = int.parse(json?['id']?.toString() ?? '0');
     int active = int.parse(json?['active']?.toString() ?? '0');
     int type = int.parse(json?['type']?.toString() ?? '0');
@@ -340,6 +340,9 @@ class Data {
     }
     if (imageJson?['acclst'] != null) {
       list = imageJson?['acclst'] as List;
+    }
+    if (imageJson?['translst'] != null) {
+      list = imageJson?['translst'] as List;
     }
     List<RepRow> imageList = list.map((data) => RepRow.fromJson(data)).toList();
     //  debugPrint('$imageList');

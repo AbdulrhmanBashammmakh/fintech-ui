@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import '../../endPoint/send-req.dart';
 import '../../models/BaseModel.dart';
+import '../../utils/AjustScroll.dart' as h;
 import '../../widgets/button_main.dart';
 
 class PurchasesList extends StatefulWidget {
@@ -17,6 +18,7 @@ class PurchasesList extends StatefulWidget {
 }
 
 class _PurchasesListState extends State<PurchasesList> {
+  final ScrollController verticalScrollController = ScrollController();
   Future<ResponseObject>? _unitsDataFuture;
   Future<ResponseObject>? _units;
   Future<ResponseObject>? _vendorsDataFuture;
@@ -136,42 +138,6 @@ class _PurchasesListState extends State<PurchasesList> {
         setState(() {});
       },
     );
-  }
-
-  String getCate(int id) {
-    if (id > 0) {
-      BaseModel x = cateList.where((e) => e.id == id).first;
-      if (x.name.isEmpty) {
-        return "";
-      } else {
-        return x.name;
-      }
-    }
-    return '';
-  }
-
-  String getVendor(int id) {
-    if (id > 0) {
-      BaseModel x = vendorList.where((e) => e.id == id).first;
-      if (x.name.isEmpty) {
-        return "";
-      } else {
-        return x.name;
-      }
-    }
-    return '';
-  }
-
-  String getUnit(int id) {
-    if (id > 0) {
-      BaseModel x = uList.where((e) => e.id == id).first;
-      if (x.name.isEmpty) {
-        return "";
-      } else {
-        return x.name;
-      }
-    }
-    return '';
   }
 
   Widget detailsInvoice() {
@@ -334,7 +300,7 @@ class _PurchasesListState extends State<PurchasesList> {
         appBar: AppBar(
           //       backgroundColor: AColors.MediumSeaGreen,
           title: Text(
-            "ver-invoice".tr,
+            "pch-list-ver".tr,
             style: const TextStyle(
               fontFamily: 'Arial',
               //   fontSize: 16,
@@ -342,93 +308,141 @@ class _PurchasesListState extends State<PurchasesList> {
             ),
           ),
         ),
-        body: Center(
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  margin: const EdgeInsets.all(5),
-                  child: FutureBuilder<ResponseObject>(
-                    future: _unitsDataFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final units = (snapshot.data!.data.heads ?? []);
-                        return ListView.builder(
-                          itemCount: units.length,
-                          itemBuilder: (context, index) {
-                            final unit = units[index];
-                            //debugPrint("reply ${unit.name}");
-                            return GestureDetector(
-                              onTap: () {
-                                show_Dialog(
-                                  context: context,
-                                  cancelPress: () {
-                                    dismissDialog();
-                                  },
-                                  btnOkText: "ok".tr,
-                                  btnCancelText: 'cancel'.tr,
-                                  btnOk: confirmButton(
-                                      vendorId: unit.vendor,
-                                      state: unit.temp,
-                                      total: unit.total,
-                                      id: unit.temp,
-                                      createdAt: unit.createdAt),
-                                  dialogType: "Q",
-                                  title: "  هل تريد اظهار بيانات الفاتورة",
-                                  desc: " رقم${unit.id} ",
-                                );
-
-                                setState(() {});
-                              },
-                              child: Card(
-                                  color: Colors.white,
-                                  child: ListTile(
-                                    title: Text('${unit.total} ريال'),
-                                    subtitle: Text(unit.vendor),
-                                    trailing: Text(unit.id.toString()),
-                                    leading: Icon(Icons.credit_score_rounded),
-                                  )),
-                            );
-                          },
-                        );
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text("حدث خطأ"));
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  ),
+        body: ListView(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: ButtonWidget(
+                        text: 'home-page'.tr,
+                        icon: Icons.home,
+                        onClicked: () {
+                          Get.toNamed('/');
+                          //  Get.to('/');
+                        },
+                      )),
                 ),
+                Expanded(child: SizedBox()),
+                Expanded(child: SizedBox()),
+                Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: ButtonWidget(
+                        text: 'back'.tr,
+                        icon: Icons.arrow_back,
+                        onClicked: () {
+                          Get.toNamed('/purchase');
+                        },
+                      )),
+                ),
+              ],
+            ),
+            Divider(thickness: 1, color: notUpdtblColor),
+            Center(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: FutureBuilder<ResponseObject>(
+                        future: _unitsDataFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final units = (snapshot.data!.data.heads ?? []);
+                            return SingleChildScrollView(
+                              controller: verticalScrollController,
+                              scrollDirection: Axis.vertical,
+                              child: Container(
+                                height: mdh - 100,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  controller: h.AdjustableScrollController(80),
+                                  itemCount: units.length,
+                                  itemBuilder: (context, index) {
+                                    final unit = units[index];
+                                    //debugPrint("reply ${unit.name}");
+                                    return GestureDetector(
+                                      onTap: () {
+                                        show_Dialog(
+                                          context: context,
+                                          cancelPress: () {
+                                            dismissDialog();
+                                          },
+                                          btnOkText: "ok".tr,
+                                          btnCancelText: 'cancel'.tr,
+                                          btnOk: confirmButton(
+                                              vendorId: unit.vendor,
+                                              state: unit.temp,
+                                              total: unit.total,
+                                              id: unit.temp,
+                                              createdAt: unit.createdAt),
+                                          dialogType: "Q",
+                                          title: "do-show-invoice".tr,
+                                          desc: "${'number'.tr}${unit.id} ",
+                                        );
+
+                                        setState(() {});
+                                      },
+                                      child: Card(
+                                          color: Colors.white,
+                                          child: ListTile(
+                                            title: Text(
+                                                '${unit.total} ${'rial'.tr}'),
+                                            subtitle: Text(unit.vendor),
+                                            trailing: Text(unit.id.toString()),
+                                            leading: Icon(
+                                                Icons.credit_score_rounded),
+                                          )),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text("sth-wrong".tr));
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            height: mdh / 4.5,
+                            width: mdw,
+                            child: Card(
+                              color: AColors.Silver,
+                              child: headInvoice(),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            height: mdh - (mdh / 4) - 100,
+                            width: mdw,
+                            child: Card(
+                              color: AColors.Silver,
+                              child: detailsInvoice(),
+                            ),
+                          ),
+                        ],
+                      )),
+                ],
               ),
-              Expanded(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.all(5),
-                        height: mdh / 4.5,
-                        width: mdw,
-                        child: Card(
-                          color: AColors.Silver,
-                          child: headInvoice(),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.all(5),
-                        height: mdh - (mdh / 4) - 100,
-                        width: mdw,
-                        child: Card(
-                          color: AColors.Silver,
-                          child: detailsInvoice(),
-                        ),
-                      ),
-                    ],
-                  )),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }

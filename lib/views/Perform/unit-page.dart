@@ -28,7 +28,7 @@ class _UnitPageState extends State<UnitPage> {
   ];
 
   TextEditingController disController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController vendorController = TextEditingController();
   TextEditingController dateInvoiceController = TextEditingController();
@@ -71,7 +71,7 @@ class _UnitPageState extends State<UnitPage> {
     super.initState();
   }
 
-  ElevatedButton confirmButton({createdAt, id, name, phone, add}) {
+  ElevatedButton confirmButton({createdAt, id, name, state}) {
     return ElevatedButton(
       child: Text("yes".tr),
       onPressed: () async {
@@ -79,9 +79,9 @@ class _UnitPageState extends State<UnitPage> {
         // var det = await getDetSaleRequest(parm: id);
         idController.text = id.toString();
         dateInvoiceController.text = createdAt;
-        addressController.text = add.toString();
+        stateController.text =
+            state == 1 ? "active-state".tr : "disable-state".tr;
         vendorController.text = name;
-        phoneController.text = phone;
         dismissDialog(context: context);
         // list = det.data.rep!;
         setState(() {});
@@ -146,9 +146,9 @@ class _UnitPageState extends State<UnitPage> {
                     margin: const EdgeInsets.all(5),
                     child: TextFormField(
                       enabled: false,
-                      controller: phoneController,
+                      controller: idController,
                       decoration: InputDecoration(
-                        label: Text("phone".tr),
+                        label: Text("id".tr),
                         counterText: "",
                       ),
                     ),
@@ -160,9 +160,9 @@ class _UnitPageState extends State<UnitPage> {
                     margin: const EdgeInsets.all(5),
                     child: TextFormField(
                       enabled: false,
-                      controller: addressController,
+                      controller: stateController,
                       decoration: InputDecoration(
-                        label: Text("address".tr),
+                        label: Text("state".tr),
                         counterText: "",
                       ),
                     ),
@@ -240,8 +240,8 @@ class _UnitPageState extends State<UnitPage> {
                         return units.isEmpty
                             ? Card(
                                 child: Center(
-                                    child:
-                                        Container(child: Text("Not things"))),
+                                    child: Container(
+                                        child: Text("not-things".tr))),
                               )
                             : SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
@@ -269,15 +269,13 @@ class _UnitPageState extends State<UnitPage> {
                                             btnOkText: "ok".tr,
                                             btnCancelText: 'cancel'.tr,
                                             btnOk: confirmButton(
-                                                add: unit.address,
                                                 name: unit.name,
-                                                phone: unit.phone,
+                                                state: unit.active,
                                                 id: unit.id,
                                                 createdAt: unit.createdAt),
                                             dialogType: "Q",
-                                            title:
-                                                "  هل تريد اظهار بيانات الفاتورة",
-                                            desc: " رقم${unit.id} ",
+                                            title: "do-need-appear-info".tr,
+                                            desc: " ${'number'.tr} ${unit.id} ",
                                           );
 
                                           // setState(() {});
@@ -295,7 +293,7 @@ class _UnitPageState extends State<UnitPage> {
                                 ),
                               );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text("حدث خطأ"));
+                        return Center(child: Text("sth-wrong".tr));
                       } else {
                         return Center(child: CircularProgressIndicator());
                       }

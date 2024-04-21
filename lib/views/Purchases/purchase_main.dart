@@ -28,14 +28,46 @@ class _PurchaseMainState extends State<PurchaseMain> {
         ),
         body: Center(
           child: Column(children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
+                      child: ButtonWidget(
+                        text: 'home-page'.tr,
+                        icon: Icons.home,
+                        onClicked: () {
+                          Get.toNamed('/');
+                          //  Get.to('/');
+                        },
+                      )),
+                ),
+                Expanded(child: SizedBox()),
+                Expanded(child: SizedBox()),
+                Expanded(child: SizedBox()),
+                // Expanded(
+                //   child: Container(
+                //       padding: const EdgeInsets.all(5),
+                //       margin: const EdgeInsets.all(5),
+                //       child: ButtonWidget(
+                //         text: 'back'.tr,
+                //         icon: Icons.arrow_back,
+                //         onClicked: () {
+                //           Get.toNamed('/purchase');
+                //         },
+                //       )),
+                // ),
+              ],
+            ),
             SizedBox(
               height: 10,
               child: Divider(thickness: 1, color: notUpdtblColor),
             ),
             Container(
                 //    height: 100,
-                child: const Text(
-              "صفحة المشتريات",
+                child: Text(
+              "pch-page".tr,
               style: TextStyle(
                 fontFamily: 'Arial',
                 fontSize: 28,
@@ -49,7 +81,7 @@ class _PurchaseMainState extends State<PurchaseMain> {
                   padding: const EdgeInsets.all(15),
                   child: ButtonMain(
                       fontSize: 14,
-                      text: "اضافة المشتريات",
+                      text: "pch-add".tr,
                       onPressed: () {
                         Get.toNamed('/purchase/add');
                       }),
@@ -62,7 +94,7 @@ class _PurchaseMainState extends State<PurchaseMain> {
                   padding: const EdgeInsets.all(15),
                   child: ButtonMain(
                       fontSize: 14,
-                      text: "مشتريات معلقة",
+                      text: "pch-temp".tr,
                       onPressed: () {
                         Get.toNamed('/purchase/temp');
                       }),
@@ -75,7 +107,7 @@ class _PurchaseMainState extends State<PurchaseMain> {
                   padding: const EdgeInsets.all(15),
                   child: ButtonMain(
                       fontSize: 14,
-                      text: "قائمة المشتريات",
+                      text: "pch-list-ver".tr,
                       onPressed: () {
                         Get.toNamed('/purchase/list');
                       }),
