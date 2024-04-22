@@ -5,6 +5,7 @@ linter:
   rules:
     avoid_shadowing_type_parameters: false
     await_only_futures: true
+     -depend_on_referenced_packages
 
 # This file configures the analyzer, which statically analyzes Dart code to
 # check for errors, warnings, and lints.

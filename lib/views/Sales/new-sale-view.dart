@@ -333,7 +333,7 @@ class NewSaleView extends StatelessWidget {
       child: Text("yes".tr),
       onPressed: () async {
         Get.defaultDialog(
-            content: Text('هل انت متأكد من اصدار الفاتورة'),
+            content: Text('issue-invoice'.tr),
             onConfirm: () async {
               var inv = InvoiceSale(
                   total: double.parse(controller.amountController.text),
@@ -352,14 +352,16 @@ class NewSaleView extends StatelessWidget {
                 controller.dataRequest.clear();
                 controller.finish();
                 // controller.complete = true;
-                Get.toNamed("/sale");
+
+                //  Get.toNamed("/sale");
+                Get.offNamed("/sale");
                 //  controller.close();
               } else {
                 // show_Dialog(desc: "no".tr, dialogType: 'E', context: context);
               }
             },
             onCancel: () {},
-            title: "تأكيد العملية",
+            title: "confirm-oprt".tr,
             // confirm: Text('ok'.tr),
             // cancel: Text('cancel'.tr)
             confirmTextColor: Colors.white);

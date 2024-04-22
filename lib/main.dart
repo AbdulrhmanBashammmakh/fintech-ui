@@ -804,6 +804,8 @@ class LocaleString extends Translations {
   Map<String, String> arabic() {
     return {
       'add': 'أضافة',
+      'issue-invoice': 'هل انت متأكد من اصدار الفاتورة؟',
+      'confirm-oprt': 'تأكيد العملية',
       'det-trans': 'تفاصيل الحركة المالية',
       'stock-products': 'المنتجات والمخزون',
       'exit': 'الخروج',
