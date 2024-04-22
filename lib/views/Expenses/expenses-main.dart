@@ -82,7 +82,11 @@ class _ExpensesMainState extends State<ExpensesMain> {
             type: e.type,
             createdAt: e.createdAt,
             address: e.address,
-            phone: e.phone));
+            phone: e.phone,
+            from: e.from,
+            to: e.to,
+            opts: e.opts,
+            amount: e.amount));
       });
       setState(() {});
       debugPrint("${list.length}");

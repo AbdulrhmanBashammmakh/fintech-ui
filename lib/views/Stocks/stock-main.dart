@@ -2,6 +2,7 @@ import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../endPoint/send-req.dart';
 import '../../models/Models.dart';
 import '../../utils/AColors.dart';
 import '../../widgets/button_main.dart';
@@ -14,10 +15,122 @@ class StockMain extends StatefulWidget {
 }
 
 class _StockMainState extends State<StockMain> {
-  List<TempDet> list = [];
+  List<MainStock> list = [];
+  List<MainStock> listAva = [];
+  List<MainStock> listNoPrice = [];
+  List<MainStock> listNonAva = [];
+  Future<ResponseObject>? stockListAva;
+  Future<ResponseObject>? stockListNoPrice;
+  Future<ResponseObject>? stockListNonAva;
   int selected = 0;
+  int itr = 1;
+  int itrNon = 1;
+  int itrNonPrice = 1;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.wait([
+        stockListAva = getInvRequestPost(
+            fullUrl: "http://localhost:9098/myapp238/api/v1/stock/available"),
+        stockListNonAva = getInvRequestPost(
+            fullUrl:
+                "http://localhost:9098/myapp238/api/v1/stock/no-available"),
+        stockListNoPrice = getInvRequestPost(
+            fullUrl: "http://localhost:9098/myapp238/api/v1/stock/no-price"),
+      ]);
+      getAva();
+      getNonAva();
+      getNonPrice();
+      setState(() {});
+    });
+
+    super.initState();
+  }
+
+  getAva() async {
+    try {
+      final value = await stockListAva;
+      final value2 = value?.data.mainStock!.toList();
+      value2?.forEach((e) {
+        listAva.add(MainStock(
+            barcode: e.barcode,
+            createdAt: e.createdAt,
+            cateId: e.cateId,
+            code: e.code,
+            cate: e.cate,
+            qty: e.qty,
+            unit: e.unit,
+            cost: e.cost,
+            lastBuy: e.lastBuy,
+            salePrice: e.salePrice,
+            product: e.product,
+            id: e.id));
+      });
+      debugPrint("${listAva.length}");
+    } catch (e) {
+      debugPrint("sth cates");
+    }
+  }
+
+  getNonAva() async {
+    try {
+      final value = await stockListNonAva;
+      final value2 = value?.data.mainStock!.toList();
+      value2?.forEach((e) {
+        listNonAva.add(MainStock(
+            barcode: e.barcode,
+            createdAt: e.createdAt,
+            cateId: e.cateId,
+            code: e.code,
+            cate: e.cate,
+            qty: e.qty,
+            unit: e.unit,
+            cost: e.cost,
+            lastBuy: e.lastBuy,
+            salePrice: e.salePrice,
+            product: e.product,
+            id: e.id));
+      });
+      debugPrint("${listNonAva.length}");
+    } catch (e) {
+      debugPrint("sth cates");
+    }
+  }
+
+  getNonPrice() async {
+    try {
+      final value = await stockListNoPrice;
+      final value2 = value?.data.mainStock!.toList();
+      value2?.forEach((e) {
+        listNoPrice.add(MainStock(
+            barcode: e.barcode,
+            createdAt: e.createdAt,
+            cateId: e.cateId,
+            code: e.code,
+            cate: e.cate,
+            qty: e.qty,
+            unit: e.unit,
+            cost: e.cost,
+            lastBuy: e.lastBuy,
+            salePrice: e.salePrice,
+            product: e.product,
+            id: e.id));
+      });
+      debugPrint("${listNoPrice.length}");
+    } catch (e) {
+      debugPrint("sth cates");
+    }
+  }
 
   Widget getAvaList() {
+    // if (itr == 1) {
+    //   // stockListAva = getInvRequestPost(
+    //   //     fullUrl: "http://localhost:9098/myapp238/api/v1/stock/available");
+    //   getAva();
+    //   setState(() {});
+    // }
+    // itr++;
     List<DataColumn> getColumns(List<String> columns) => columns
         .map((String column) => DataColumn(
               label: Expanded(
@@ -29,16 +142,18 @@ class _StockMainState extends State<StockMain> {
         .toList();
     List<String> columns = [
       // 'update'.tr,
-      'delete'.tr,
+      '#',
       'cate'.tr,
       'code'.tr,
       'name-product'.tr,
       'qty'.tr,
-      'price'.tr,
-      'amount'.tr,
+      'cost'.tr,
+      'sale-price'.tr,
+      'last-buy-price'.tr,
       'unit'.tr,
-      'barcode'.tr,
+      // 'barcode'.tr,
     ];
+    setState(() {});
     final ScrollController _verticalScrollController = ScrollController();
     final ScrollController _horizontalScrollController = ScrollController();
     final BoxDecoration sliderDecoration = BoxDecoration(
@@ -92,18 +207,20 @@ class _StockMainState extends State<StockMain> {
                           sortColumnIndex: sortColumnIndex,
                           columns: getColumns(columns),
                           horizontalMargin: 10,
-                          rows: list
+                          rows: listAva
                               .map(
                                 (data) => DataRow(
                                   cells: <DataCell>[
+                                    DataCell(Text(data.id.toString())),
                                     DataCell(Text(data.cate.toString())),
                                     DataCell(Text(data.code)),
-                                    DataCell(Text(data.name)),
+                                    DataCell(Text(data.product)),
                                     DataCell(Text(data.qty.toString())),
-                                    DataCell(Text(data.price.toString())),
-                                    DataCell(Text(data.amt.toString())),
+                                    DataCell(Text(data.cost.toString())),
+                                    DataCell(Text(data.salePrice.toString())),
+                                    DataCell(Text(data.lastBuy.toString())),
                                     DataCell(Text(data.unit.toString())),
-                                    DataCell(Text(data.code)),
+                                    // DataCell(Text(data.barcode)),
                                   ],
                                 ),
                               )
@@ -122,6 +239,13 @@ class _StockMainState extends State<StockMain> {
   }
 
   Widget getAvaNonList() {
+    // if (itrNon == 1) {
+    //   // stockListNonAva = getInvRequestPost(
+    //   //     fullUrl: "http://localhost:9098/myapp238/api/v1/stock/no-available");
+    //   getNonAva();
+    //   setState(() {});
+    // }
+    // itrNon++;
     List<DataColumn> getColumns(List<String> columns) => columns
         .map((String column) => DataColumn(
               label: Expanded(
@@ -133,16 +257,18 @@ class _StockMainState extends State<StockMain> {
         .toList();
     List<String> columns = [
       // 'update'.tr,
-      // 'delete'.tr,
+      '#',
       'cate'.tr,
       'code'.tr,
       'name-product'.tr,
       'qty'.tr,
-      'price'.tr,
-      'amount'.tr,
+      'cost'.tr,
+      'sale-price'.tr,
+      'last-buy-price'.tr,
       'unit'.tr,
-      'barcode'.tr,
+      // 'barcode'.tr,
     ];
+    setState(() {});
     final ScrollController _verticalScrollController = ScrollController();
     final ScrollController _horizontalScrollController = ScrollController();
     final BoxDecoration sliderDecoration = BoxDecoration(
@@ -196,18 +322,19 @@ class _StockMainState extends State<StockMain> {
                           sortColumnIndex: sortColumnIndex,
                           columns: getColumns(columns),
                           horizontalMargin: 10,
-                          rows: list
+                          rows: listNonAva
                               .map(
                                 (data) => DataRow(
                                   cells: <DataCell>[
+                                    DataCell(Text(data.id.toString())),
                                     DataCell(Text(data.cate.toString())),
                                     DataCell(Text(data.code)),
-                                    DataCell(Text(data.name)),
+                                    DataCell(Text(data.product)),
                                     DataCell(Text(data.qty.toString())),
-                                    DataCell(Text(data.price.toString())),
-                                    DataCell(Text(data.amt.toString())),
+                                    DataCell(Text(data.cost.toString())),
+                                    DataCell(Text(data.salePrice.toString())),
+                                    DataCell(Text(data.lastBuy.toString())),
                                     DataCell(Text(data.unit.toString())),
-                                    DataCell(Text(data.code)),
                                   ],
                                 ),
                               )
@@ -226,6 +353,13 @@ class _StockMainState extends State<StockMain> {
   }
 
   Widget getNonPriceList() {
+    // if (itrNonPrice == 1) {
+    //   // stockListNoPrice = getInvRequestPost(
+    //   //     fullUrl: "http://localhost:9098/myapp238/api/v1/stock/no-price");
+    //   getNonPrice();
+    //   setState(() {});
+    // }
+    // itrNonPrice++;
     List<DataColumn> getColumns(List<String> columns) => columns
         .map((String column) => DataColumn(
               label: Expanded(
@@ -237,16 +371,17 @@ class _StockMainState extends State<StockMain> {
         .toList();
     List<String> columns = [
       'update'.tr,
-      // 'delete'.tr,
+      'ID',
       'cate'.tr,
       'code'.tr,
       'name-product'.tr,
       'qty'.tr,
-      'price'.tr,
-      'amount'.tr,
+      'cost'.tr,
+      'sale-price'.tr,
+      'last-buy-price'.tr,
       'unit'.tr,
-      'barcode'.tr,
     ];
+    setState(() {});
     final ScrollController _verticalScrollController = ScrollController();
     final ScrollController _horizontalScrollController = ScrollController();
     final BoxDecoration sliderDecoration = BoxDecoration(
@@ -300,18 +435,23 @@ class _StockMainState extends State<StockMain> {
                           sortColumnIndex: sortColumnIndex,
                           columns: getColumns(columns),
                           horizontalMargin: 10,
-                          rows: list
+                          rows: listNoPrice
                               .map(
                                 (data) => DataRow(
                                   cells: <DataCell>[
+                                    DataCell(IconButton(
+                                      icon: Icon(Icons.update),
+                                      onPressed: () {},
+                                    )),
+                                    DataCell(Text(data.id.toString())),
                                     DataCell(Text(data.cate.toString())),
                                     DataCell(Text(data.code)),
-                                    DataCell(Text(data.name)),
+                                    DataCell(Text(data.product)),
                                     DataCell(Text(data.qty.toString())),
-                                    DataCell(Text(data.price.toString())),
-                                    DataCell(Text(data.amt.toString())),
+                                    DataCell(Text(data.cost.toString())),
+                                    DataCell(Text(data.salePrice.toString())),
+                                    DataCell(Text(data.lastBuy.toString())),
                                     DataCell(Text(data.unit.toString())),
-                                    DataCell(Text(data.code)),
                                   ],
                                 ),
                               )
@@ -409,10 +549,10 @@ class _StockMainState extends State<StockMain> {
                                   cells: <DataCell>[
                                     DataCell(Text(data.cate.toString())),
                                     DataCell(Text(data.code)),
-                                    DataCell(Text(data.name)),
+                                    DataCell(Text(data.product)),
                                     DataCell(Text(data.qty.toString())),
-                                    DataCell(Text(data.price.toString())),
-                                    DataCell(Text(data.amt.toString())),
+                                    DataCell(Text(data.cost.toString())),
+                                    DataCell(Text(data.salePrice.toString())),
                                     DataCell(Text(data.unit.toString())),
                                     DataCell(Text(data.code)),
                                   ],
@@ -437,8 +577,8 @@ class _StockMainState extends State<StockMain> {
     return Scaffold(
         appBar: AppBar(
           //   backgroundColor: AColors.FireBrick,
-          title: const Text(
-            "المنتجات والمخزون",
+          title: Text(
+            "stock-products".tr,
             style: TextStyle(
               fontFamily: 'Arial',
               //   fontSize: 16,

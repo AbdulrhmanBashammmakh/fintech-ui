@@ -20,10 +20,11 @@ class _LedgerMainState extends State<LedgerMain> {
     // 'update'.tr,
     // 'delete'.tr,
     'id'.tr,
-    'phone'.tr,
+    'opts'.tr,
+    'amount'.tr,
     'name'.tr,
-    'address'.tr,
-    'active'.tr,
+    'from'.tr,
+    'to'.tr,
     'createdAt'.tr,
   ];
 
@@ -78,11 +79,15 @@ class _LedgerMainState extends State<LedgerMain> {
         list.add(RepRow(
             name: e.name,
             id: e.id,
+            opts: e.opts,
             active: e.active,
             type: e.type,
             createdAt: e.createdAt,
             address: e.address,
-            phone: e.phone));
+            phone: e.phone,
+            from: e.from,
+            to: e.to,
+            amount: e.amount));
       });
       setState(() {});
       debugPrint("${list.length}");
@@ -110,12 +115,12 @@ class _LedgerMainState extends State<LedgerMain> {
   }
 
   Widget detailsInvoice() {
-    var mdw = MediaQuery.of(context).size.width * 0.9;
+    var mdw = MediaQuery.of(context).size.width * 0.6;
     return ListView(
       children: [
         Container(
-          height: 40,
-          width: mdw / 2,
+          //  height: 40,
+          width: mdw - 20,
           child: Card(child: Center(child: Text("det-trans".tr))),
           padding: const EdgeInsets.all(5),
           margin: const EdgeInsets.all(5),
@@ -169,24 +174,15 @@ class _LedgerMainState extends State<LedgerMain> {
                                       .map(
                                         (data) => DataRow(
                                           cells: <DataCell>[
-                                            // DataCell(ElevatedButton(
-                                            //     onPressed: () {
-                                            //       list.remove(data);
-                                            //
-                                            //       setState(() {});
-                                            //     },
-                                            //     style: ButtonStyle(
-                                            //       backgroundColor:
-                                            //           MaterialStateProperty.all(
-                                            //               secondaryColor),
-                                            //     ),
-                                            //     child: Text('delete'.tr))),
                                             DataCell(Text(data.id.toString())),
-                                            DataCell(Text(data.phone)),
-                                            DataCell(Text(data.name)),
-                                            DataCell(Text(data.address)),
                                             DataCell(
-                                                Text(data.active.toString())),
+                                                Text(data.opts.toString())),
+                                            DataCell(
+                                                Text(data.amount.toString())),
+                                            DataCell(Text(data.name)),
+                                            DataCell(
+                                                Text(data.from.toString())),
+                                            DataCell(Text(data.to.toString())),
                                             DataCell(Text(data.createdAt)),
                                           ],
                                         ),
@@ -217,7 +213,7 @@ class _LedgerMainState extends State<LedgerMain> {
         appBar: AppBar(
           //   backgroundColor: AColors.FireBrick,
           title: Text(
-            "trans".tr,
+            "ledger".tr,
             style: TextStyle(
               fontFamily: 'Arial',
               //   fontSize: 16,
@@ -259,50 +255,68 @@ class _LedgerMainState extends State<LedgerMain> {
               ],
             ),
             Divider(thickness: 1, color: notUpdtblColor),
-            Row(
-              children: [
-                Expanded(
-                    child: Container(
-                        padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.all(5),
-                        child: Column(
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(5),
-                                margin: const EdgeInsets.all(5),
-                                child: ButtonWidget(
-                                  text: 'add-expenses'.tr,
-                                  icon: Icons.add_box_sharp,
-                                  onClicked: () {},
-                                )),
-                          ],
-                        ))),
-                Expanded(
-                    flex: 3,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(5),
-                                margin: const EdgeInsets.all(5),
-                                height: 400,
-                                width: mdw,
-                                child: Card(
-                                  color: AColors.Silver,
-                                  child: detailsInvoice(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )),
-              ],
+            Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.all(5),
+                    height: mdh * .9,
+                    width: mdw * 2 / 3,
+                    child: Card(
+                      color: AColors.Silver,
+                      child: detailsInvoice(),
+                    ),
+                  ),
+                ],
+              ),
             ),
+            // Row(
+            //   children: [
+            //     // Expanded(
+            //     //     child: Container(
+            //     //         padding: const EdgeInsets.all(5),
+            //     //         margin: const EdgeInsets.all(5),
+            //     //         child: Column(
+            //     //           children: [
+            //     //             Container(
+            //     //                 padding: const EdgeInsets.all(5),
+            //     //                 margin: const EdgeInsets.all(5),
+            //     //                 child: ButtonWidget(
+            //     //                   text: 'add-expenses'.tr,
+            //     //                   icon: Icons.add_box_sharp,
+            //     //                   onClicked: () {},
+            //     //                 )),
+            //     //           ],
+            //     //         ))),
+            //     Expanded(
+            //         flex: 3,
+            //         child: Stack(
+            //           children: [
+            //             Align(
+            //               alignment: Alignment.topCenter,
+            //               child: Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.center,
+            //                 children: [
+            //                   Container(
+            //                     padding: const EdgeInsets.all(5),
+            //                     margin: const EdgeInsets.all(5),
+            //                     height: 400,
+            //                     width: mdw,
+            //                     child: Card(
+            //                       color: AColors.Silver,
+            //                       child: detailsInvoice(),
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //           ],
+            //         )),
+            //   ],
+            // ),
           ],
         ));
   }

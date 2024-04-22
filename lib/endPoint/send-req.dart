@@ -259,7 +259,11 @@ class RepRow {
   final String address;
   final String phone;
   final String createdAt;
+  final double amount;
   final int id;
+  final int opts;
+  final int from;
+  final int to;
   int active;
   int type;
   bool isSelected = false;
@@ -272,6 +276,10 @@ class RepRow {
     required this.createdAt,
     required this.address,
     required this.phone,
+    required this.amount,
+    required this.from,
+    required this.to,
+    required this.opts,
   });
 
   factory RepRow.fromJson(Map<String, dynamic>? json) {
@@ -282,6 +290,10 @@ class RepRow {
     int id = int.parse(json?['id']?.toString() ?? '0');
     int active = int.parse(json?['active']?.toString() ?? '0');
     int type = int.parse(json?['type']?.toString() ?? '0');
+    int from = int.parse(json?['from_id']?.toString() ?? '0');
+    int to = int.parse(json?['to_id']?.toString() ?? '0');
+    int opts = int.parse(json?['opts_id']?.toString() ?? '0');
+    double amount = double.parse(json?['amount']?.toString() ?? '0');
 
     return RepRow(
         name: name,
@@ -290,7 +302,11 @@ class RepRow {
         type: type,
         createdAt: createdAt,
         address: address,
-        phone: phone);
+        phone: phone,
+        amount: amount,
+        to: to,
+        opts: opts,
+        from: from);
   }
 }
 
