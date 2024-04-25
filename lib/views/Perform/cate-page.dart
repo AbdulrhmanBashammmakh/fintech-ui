@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../endPoint/send-req.dart';
+import '../../models/Models.dart';
 import '../../utils/AColors.dart';
 import '../../utils/AjustScroll.dart' as h;
 import '../../widgets/button_main.dart';
@@ -26,7 +27,9 @@ class _CatePageState extends State<CatePage> {
     'active'.tr,
     'createdAt'.tr,
   ];
-
+  GlobalKey<FormState> dataEntryFormState = GlobalKey<FormState>();
+  int ret = 0;
+  TextEditingController newCateController = TextEditingController();
   TextEditingController disController = TextEditingController();
   TextEditingController stateController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -69,6 +72,113 @@ class _CatePageState extends State<CatePage> {
     });
 
     super.initState();
+  }
+
+  getAddNewItem(context) {
+    ret = 0;
+    return Form(
+        key: dataEntryFormState,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(5),
+              margin: const EdgeInsets.only(bottom: 15),
+              alignment: Alignment.center,
+              child: Text(
+                'add-cate'.tr,
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      fontStyle: FontStyle.italic,
+                      decoration: TextDecoration.underline,
+                      fontSize: 20,
+                    ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: newCateController,
+                      decoration: InputDecoration(
+                        label: Text("name-cate".tr),
+                        counterText: "",
+                      ),
+                      validator: (text) {
+                        if (text == '') return "required".tr;
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: ButtonWidget(
+                        text: "add".tr,
+                        icon: Icons.add,
+                        onClicked: () async {
+                          if (dataEntryFormState.currentState!.validate()) {
+                            Cate cate =
+                                Cate(name: newCateController.text, id: 0);
+                            ret = await sendPostNewCate(cate: cate);
+                            setState(() {});
+                            dismissDialog(context: context);
+                            if (ret == 1) {
+                              setState(() {});
+                              Get.offNamed('/perform');
+                            } else {
+                              dismissDialog(context: context);
+                              Get.dialog(Dialog(
+                                child: Text(" not good"),
+                              ));
+                            }
+                            // if (ret == 1) {
+                            //   dismissDialog(context: context);
+                            //   Get.dialog(Dialog(
+                            //     child: Text("good sound"),
+                            //   ));
+                            // } else {
+                            //   dismissDialog(context: context);
+                            //   Get.dialog(Dialog(
+                            //     child: Text(" not good"),
+                            //   ));
+                            // }
+
+                          }
+
+                          // AwesomeDialog(context: context).dismiss();
+                        }),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: SizedBox(width: 10),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: ButtonWidget(
+                        text: "back".tr,
+                        icon: Icons.backspace_outlined,
+                        onClicked: () {
+                          dismissDialog(context: context);
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 
   ElevatedButton confirmButton({createdAt, id, name, state}) {
@@ -320,15 +430,39 @@ class _CatePageState extends State<CatePage> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.all(5),
-                                margin: const EdgeInsets.all(5),
-                                height: 400,
-                                width: mdw,
                                 child: Card(
-                                  color: AColors.Silver,
-                                  child: detailsInvoice(),
+                                  // color: AColors.Silver,
+                                  child: Center(
+                                      child: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    margin: const EdgeInsets.all(5),
+                                    height: 80,
+                                    width: mdw / 4,
+                                    child: ButtonWidget(
+                                      text: 'add-new'.tr,
+                                      icon: Icons.account_circle_outlined,
+                                      onClicked: () {
+                                        Get.defaultDialog(
+                                            title: "",
+                                            content: Container(
+                                              child: getAddNewItem(context),
+                                            ));
+                                      },
+                                    ),
+                                  )),
                                 ),
                               ),
+
+                              // Container(
+                              //   padding: const EdgeInsets.all(5),
+                              //   margin: const EdgeInsets.all(5),
+                              //   height: 400,
+                              //   width: mdw,
+                              //   child: Card(
+                              //     color: AColors.Silver,
+                              //     child: detailsInvoice(),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),

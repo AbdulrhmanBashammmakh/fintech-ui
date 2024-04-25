@@ -316,3 +316,97 @@ class PchDet {
         unit: unit);
   }
 }
+
+class Vendor {
+  final String address;
+  final String phone;
+  final String name;
+  final int id;
+
+  Vendor({
+    required this.id,
+    required this.name,
+    required this.address,
+    required this.phone,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "address": address,
+      "phone": phone,
+      "name": name,
+    };
+  }
+
+  factory Vendor.fromJson(Map<String, dynamic>? json) {
+    String name = json?['name'] ?? '';
+    String address = json?['address'] ?? '';
+    String phone = json?['phone'] ?? '';
+    int id = int.parse(json?['id']?.toString() ?? '0');
+
+    return Vendor(
+      address: address,
+      phone: phone,
+      id: id,
+      name: name,
+    );
+  }
+}
+
+class Cate {
+  final String name;
+  final int id;
+
+  Cate({
+    required this.id,
+    required this.name,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+    };
+  }
+
+  factory Cate.fromJson(Map<String, dynamic>? json) {
+    String name = json?['name'] ?? '';
+    // String address = json?['address'] ?? '';
+    // String phone = json?['phone'] ?? '';
+    int id = int.parse(json?['id']?.toString() ?? '0');
+
+    return Cate(
+      id: id,
+      name: name,
+    );
+  }
+}
+
+class UpdatePrice {
+  final double cost;
+  final double price;
+  final int id;
+
+  UpdatePrice({
+    required this.id,
+    required this.cost,
+    required this.price,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "cost": cost,
+      "sale_price": price,
+    };
+  }
+
+  factory UpdatePrice.fromJson(Map<String, dynamic>? json) {
+    int id = int.parse(json?['id']?.toString() ?? '0');
+    double cost = double.parse(json?['cost']?.toString() ?? '0');
+    double price = double.parse(json?['sale_price']?.toString() ?? '0');
+
+    return UpdatePrice(id: id, price: price, cost: cost);
+  }
+}

@@ -804,8 +804,15 @@ class LocaleString extends Translations {
   Map<String, String> arabic() {
     return {
       'add': 'أضافة',
+      'add-vendor': 'أضافة مورد جديد',
+      'add-cate': 'أضافة صنف جديد',
+      'name-cate': 'اسم الصنف الجديد',
+      'name-vendor': 'اسم المورد الجديد',
       'issue-invoice': 'هل انت متأكد من اصدار الفاتورة؟',
       'confirm-oprt': 'تأكيد العملية',
+      'can-not-accept-zero': 'لايمكن قبول الصفر',
+      'in-table': 'المنتج مضاف في الجدول مسبقا',
+      'add-by-search': 'البحث عن منتج',
       'det-trans': 'تفاصيل الحركة المالية',
       'stock-products': 'المنتجات والمخزون',
       'exit': 'الخروج',

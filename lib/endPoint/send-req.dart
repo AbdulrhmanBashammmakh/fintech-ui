@@ -75,6 +75,66 @@ Future<int> sendPostRequestVer({temp, discount}) async {
   }
 }
 
+Future<int> sendPostNewVendor({required Vendor vendor}) async {
+  final insert = vendor.toJson();
+
+  try {
+    final response = await dio.post(
+      "http://localhost:9098/myapp238/api/v1/main/vendor/insert",
+      data: insert,
+    );
+
+    if (response.statusCode == 200) {
+      return 1;
+      // show_Dialog(desc: "done".tr, dialogType: 'S', context: context);
+    } else {
+      return 0;
+    }
+  } catch (e) {
+    return 0;
+  }
+}
+
+Future<int> sendPostNewCate({required Cate cate}) async {
+  final insert = cate.toJson();
+
+  try {
+    final response = await dio.post(
+      "http://localhost:9098/myapp238/api/v1/main/cate/insert",
+      data: insert,
+    );
+
+    if (response.statusCode == 200) {
+      return 1;
+      // show_Dialog(desc: "done".tr, dialogType: 'S', context: context);
+    } else {
+      return 0;
+    }
+  } catch (e) {
+    return 0;
+  }
+}
+
+Future<int> sendPostUpdatePrice({required UpdatePrice updatePrice}) async {
+  final insert = updatePrice.toJson();
+
+  try {
+    final response = await dio.post(
+      "http://localhost:9098/myapp238/api/v1/stock/update-item",
+      data: insert,
+    );
+
+    if (response.statusCode == 200) {
+      return 1;
+      // show_Dialog(desc: "done".tr, dialogType: 'S', context: context);
+    } else {
+      return 0;
+    }
+  } catch (e) {
+    return 0;
+  }
+}
+
 Future<ResponseObject> getAllMainRequest({fullUrl}) async {
   try {
     final response = await dio.post(

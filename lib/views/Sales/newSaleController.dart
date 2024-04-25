@@ -5,16 +5,32 @@ import 'package:get/get.dart';
 import '../../endPoint/send-req.dart';
 import '../../models/BaseModel.dart';
 import '../../models/Models.dart';
+import '../../models/list-item-model.dart';
 import '../../utils/AColors.dart';
 import '../../utils/Constants.dart';
 import 'new-sale.dart';
 
 class SaleController extends GetxController {
   bool complete = false;
+  bool showResult = false;
+  ListItemModel userListItemModel = ListItemModel();
   BaseModel baseModel = BaseModel(id: 0, name: '');
   BaseModel cate = BaseModel(id: 0, name: '');
   BaseModel vendor = BaseModel(id: 0, name: '');
   MainStock mainStock = MainStock(
+      barcode: '',
+      createdAt: '',
+      cateId: 0,
+      code: '',
+      cate: '',
+      qty: 0,
+      unit: '',
+      cost: 0,
+      lastBuy: 0,
+      salePrice: 0,
+      product: '',
+      id: 0);
+  MainStock mainStockSelected = MainStock(
       barcode: '',
       createdAt: '',
       cateId: 0,
@@ -167,6 +183,18 @@ class SaleController extends GetxController {
     update();
   }
 
+  setItemInText(String x) {
+    mainStockSelected = mainList!.where((e) => e.code == x).first;
+    priceController.text = mainStockSelected.salePrice.toString();
+    productController.text = mainStockSelected.product.toString();
+    priceAController.text = mainStockSelected.cost.toString();
+    qtyAController.text = mainStockSelected.qty.toString();
+    cateController.text = mainStockSelected.cate.toString();
+    unitController.text = mainStockSelected.unit.toString();
+    codeController.text = mainStockSelected.code.toString();
+    update();
+  }
+
   changeQty(String x, int q) {
     MainStock change = mainList!.firstWhere((e) => e.code.toString() == x);
     mainListRemoved.add(change);
@@ -200,5 +228,10 @@ class SaleController extends GetxController {
 
   bool isAccepted(String x) {
     return dataRequest.where((e) => e.code == x).isEmpty ? true : false;
+  }
+
+  getShow(String x) {
+    showResult = isAccepted(x);
+    update();
   }
 }

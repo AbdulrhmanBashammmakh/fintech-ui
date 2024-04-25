@@ -6,8 +6,10 @@ import 'package:get/get.dart';
 import '../../endPoint/send-req.dart';
 import '../../models/BaseModel.dart';
 import '../../models/Models.dart';
+import '../../models/list-item-model.dart';
 import '../../utils/AColors.dart';
 import '../../widgets/button_main.dart';
+import '../../widgets/list-item.dart';
 import 'new-sale.dart';
 import 'newSaleController.dart';
 
@@ -183,6 +185,32 @@ class NewSaleView extends StatelessWidget {
                                   title: "",
                                   content: Container(
                                     child: getFormInputDetails(context,
+                                        controller: controller),
+                                  ));
+                              // showCustomDialog(
+                              //     context: Widget.context,
+                              //     btnCancelText: 'cancel'.tr,
+                              //     btnOk: Container(),
+                              //     btnCancel: Container(),
+                              //     body: getFormInputDetails(),
+                              //     dismissOnTouchOutside: false,
+                              //     showCloseIcon: true,
+                              //     width: mdw);
+                            }))),
+                Spacer(),
+                Expanded(
+                    child: Container(
+                        padding: const EdgeInsets.all(5),
+                        margin: const EdgeInsets.all(5),
+                        child: ButtonWidget(
+                            text: "add-by-search".tr,
+                            icon: Icons.verified,
+                            onClicked: () {
+                              Get.defaultDialog(
+                                  title: "",
+                                  content: Container(
+                                    child: getFormInputDetailsBySearchName(
+                                        context,
                                         controller: controller),
                                   ));
                               // showCustomDialog(
@@ -666,10 +694,268 @@ class NewSaleView extends StatelessWidget {
         ));
   }
 
+  getFormInputDetailsBySearchName(context, {controller}) {
+    reset(controller: controller);
+    return Form(
+        key: dataEntryFormState,
+        child: GetBuilder<SaleController>(
+          init: SaleController(),
+          builder: (controller) {
+            return Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  margin: const EdgeInsets.only(bottom: 15),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'add-product'.tr,
+                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                          fontStyle: FontStyle.italic,
+                          decoration: TextDecoration.underline,
+                          fontSize: 20,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                          padding: const EdgeInsets.all(5),
+                          margin: const EdgeInsets.all(5),
+                          child: ListItem(
+                            controller: controller,
+                            label: 'product',
+                            mndtry: true,
+                            showSearchBox: true,
+                            future: controller.avaDataFuture,
+                            lang: 'ar',
+                            enabled: true,
+                            selectedItem: controller.userListItemModel.no == '0'
+                                ? null
+                                : controller.userListItemModel,
+                            validator: (text) {
+                              if (text?.no == 0 || text?.no == null)
+                                return "required".tr;
+                              if (!controller
+                                  .isAccepted(controller.userListItemModel.no))
+                                return "in-table".tr;
+                              return null;
+                            },
+                            onChanged: ((data) async {
+                              if (data == null)
+                                controller.userListItemModel = ListItemModel();
+                              else {
+                                controller.userListItemModel = data!;
+                                controller.setItemInText(
+                                    controller.userListItemModel.no);
+                                controller
+                                    .getShow(controller.userListItemModel.no);
+                              }
+                            }),
+                            onSaved: (data) {
+                              controller.userListItemModel = data!;
+                            },
+                            clearBtn: controller.userListItemModel.no != '' &&
+                                controller.userListItemModel.no != '0',
+                          )
+                          // getMainStockContainer(controller: controller)
+                          ),
+                    ),
+                  ],
+                ),
+                controller.showResult
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              child: TextFormField(
+                                controller: controller.productController,
+                                decoration: InputDecoration(
+                                  label: Text("name-product".tr),
+                                  counterText: "",
+                                ),
+                                validator: (text) {
+                                  if (text == '') return "required".tr;
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              child: TextFormField(
+                                enabled: false,
+                                readOnly: true,
+                                controller: controller.qtyAController,
+                                decoration: InputDecoration(
+                                  label: Text("qty".tr),
+                                  counterText: "",
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              //    color: Colors.grey.shade500,
+                              margin: const EdgeInsets.all(5),
+                              child: TextFormField(
+                                readOnly: true,
+                                enabled: false,
+                                controller: controller.priceAController,
+                                decoration: InputDecoration(
+                                  label: Text("cost".tr),
+                                  counterText: "",
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                controller.showResult
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              child: TextFormField(
+                                controller: controller.codeController,
+                                decoration: InputDecoration(
+                                  label: Text("code".tr),
+                                  counterText: "",
+                                ),
+                                validator: (text) {
+                                  if (text == '') return "required".tr;
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              child: TextFormField(
+                                controller: controller.qtyController,
+                                decoration: InputDecoration(
+                                  label: Text("qty".tr),
+                                  counterText: "",
+                                ),
+                                validator: (text) {
+                                  if (text == '') return "required".tr;
+                                  if (!isNumeric(text!))
+                                    return "numbers-only".tr;
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              child: TextFormField(
+                                controller: controller.priceController,
+                                decoration: InputDecoration(
+                                  label: Text("price".tr),
+                                  counterText: "",
+                                ),
+                                validator: (text) {
+                                  if (text == '') return "required".tr;
+                                  if (text == '0' || text == '0.0')
+                                    return "can-not-accept-zero".tr;
+                                  if (!isNumeric(text!))
+                                    return "numbers-only".tr;
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        child: ButtonWidget(
+                            text: "add".tr,
+                            icon: Icons.add,
+                            onClicked: () {
+                              if (dataEntryFormState.currentState!.validate()) {
+                                double pr = double.parse(
+                                    controller.priceController.text);
+                                int qt =
+                                    int.parse(controller.qtyController.text);
+                                double amt = pr * qt;
+
+                                var det = detSale(
+                                    amount: amt,
+                                    code: controller.codeController.text,
+                                    name: controller.productController.text,
+                                    cate: controller.cate.id,
+                                    price: pr,
+                                    qty: qt,
+                                    unit: controller.unitController.text,
+                                    cateName: controller.cateController.text,
+                                    unitName: controller.unitController.text);
+
+                                if (controller.isAccepted(
+                                    controller.codeController.text)) {
+                                  fillTable(det, controller: controller);
+                                  controller.changeQty(det.code, det.qty);
+                                  dismissDialog(context: context);
+                                  reset(controller: controller);
+                                  controller.getDataRequest();
+                                } else {
+                                  reset(controller: controller);
+                                  dismissDialog(context: context);
+                                  Get.dialog(Dialog(
+                                    child: Text("in the table"),
+                                  ));
+                                }
+                              }
+
+                              // AwesomeDialog(context: context).dismiss();
+                            }),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        child: SizedBox(width: 10),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        child: ButtonWidget(
+                            text: "back".tr,
+                            icon: Icons.backspace_outlined,
+                            onClicked: () {
+                              reset(controller: controller);
+                              dismissDialog(context: context);
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ));
+  }
+
   fillTable(detSale det, {controller}) {
     controller.dataRequest.add(det);
 
     sumInvoice(controller: controller);
+    //controller.userListItemModel.no = "0";
     // setState(() {});
   }
 
@@ -690,6 +976,7 @@ class NewSaleView extends StatelessWidget {
     controller.productController.text = '';
     controller.cateController.text = '0';
     controller.unitController.text = '';
+    controller.showResult = false;
     controller.baseModel = BaseModel(id: 0, name: '');
     controller.cate = BaseModel(id: 0, name: '');
     controller.mainStock = MainStock(
@@ -705,6 +992,7 @@ class NewSaleView extends StatelessWidget {
         salePrice: 0,
         product: '',
         id: 0);
+    controller.userListItemModel = ListItemModel();
 
     // controller.getStock('0');
   }

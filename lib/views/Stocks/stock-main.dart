@@ -22,6 +22,13 @@ class _StockMainState extends State<StockMain> {
   Future<ResponseObject>? stockListAva;
   Future<ResponseObject>? stockListNoPrice;
   Future<ResponseObject>? stockListNonAva;
+  GlobalKey<FormState> dataEntryFormState = GlobalKey<FormState>();
+  int ret = 0;
+  TextEditingController newPriceController = TextEditingController();
+  TextEditingController newCostController = TextEditingController();
+  TextEditingController lastController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController idController = TextEditingController();
   int selected = 0;
   int itr = 1;
   int itrNon = 1;
@@ -46,6 +53,167 @@ class _StockMainState extends State<StockMain> {
     });
 
     super.initState();
+  }
+
+  getAddNewItem(context) {
+    ret = 0;
+    return Form(
+        key: dataEntryFormState,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(5),
+              margin: const EdgeInsets.only(bottom: 15),
+              alignment: Alignment.center,
+              child: Text(
+                'add-cate'.tr,
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      fontStyle: FontStyle.italic,
+                      decoration: TextDecoration.underline,
+                      fontSize: 20,
+                    ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        label: Text("product".tr),
+                        counterText: "",
+                      ),
+                      enabled: false,
+                      validator: (text) {
+                        if (text == '') return "required".tr;
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: lastController,
+                      decoration: InputDecoration(
+                        label: Text("last-buy".tr),
+                        counterText: "",
+                      ),
+                      enabled: false,
+                      validator: (text) {
+                        if (text == '') return "required".tr;
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: newCostController,
+                      decoration: InputDecoration(
+                        label: Text("new-cost".tr),
+                        counterText: "",
+                      ),
+                      validator: (text) {
+                        if (text == '') return "required".tr;
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: newPriceController,
+                      decoration: InputDecoration(
+                        label: Text("new-price".tr),
+                        counterText: "",
+                      ),
+                      validator: (text) {
+                        if (text == '') return "required".tr;
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: ButtonWidget(
+                        text: "update".tr,
+                        icon: Icons.add,
+                        onClicked: () async {
+                          if (dataEntryFormState.currentState!.validate()) {
+                            UpdatePrice update = UpdatePrice(
+                                id: int.parse(idController.text),
+                                cost: double.parse(newCostController.text),
+                                price: double.parse(newPriceController.text));
+                            ret =
+                                await sendPostUpdatePrice(updatePrice: update);
+                            setState(() {});
+                            dismissDialog(context: context);
+                            if (ret == 1) {
+                              setState(() {});
+                              Get.offNamed('/');
+                            } else {
+                              dismissDialog(context: context);
+                              Get.dialog(Dialog(
+                                child: Text(" not good"),
+                              ));
+                            }
+                            // if (ret == 1) {
+                            //   dismissDialog(context: context);
+                            //   Get.dialog(Dialog(
+                            //     child: Text("good sound"),
+                            //   ));
+                            // } else {
+                            //   dismissDialog(context: context);
+                            //   Get.dialog(Dialog(
+                            //     child: Text(" not good"),
+                            //   ));
+                            // }
+
+                          }
+
+                          // AwesomeDialog(context: context).dismiss();
+                        }),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: SizedBox(width: 10),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: ButtonWidget(
+                        text: "back".tr,
+                        icon: Icons.backspace_outlined,
+                        onClicked: () {
+                          dismissDialog(context: context);
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 
   getAva() async {
@@ -441,7 +609,23 @@ class _StockMainState extends State<StockMain> {
                                   cells: <DataCell>[
                                     DataCell(IconButton(
                                       icon: Icon(Icons.update),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        idController.text = data.id.toString();
+                                        nameController.text =
+                                            data.product.toString();
+                                        newPriceController.text =
+                                            data.salePrice.toString();
+                                        newCostController.text =
+                                            data.cost.toString();
+                                        lastController.text =
+                                            data.lastBuy.toString();
+
+                                        Get.defaultDialog(
+                                            title: "",
+                                            content: Container(
+                                              child: getAddNewItem(context),
+                                            ));
+                                      },
                                     )),
                                     DataCell(Text(data.id.toString())),
                                     DataCell(Text(data.cate.toString())),

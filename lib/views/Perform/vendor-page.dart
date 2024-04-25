@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../endPoint/send-req.dart';
+import '../../models/Models.dart';
 import '../../utils/AColors.dart';
 import '../../utils/AjustScroll.dart' as h;
 import '../../widgets/button_main.dart';
@@ -27,6 +28,12 @@ class _VendorPageState extends State<VendorPage> {
     'createdAt'.tr,
   ];
 
+  GlobalKey<FormState> dataEntryFormState = GlobalKey<FormState>();
+  //GlobalKey<FormState> formState = GlobalKey<FormState>();
+  TextEditingController newVendorController = TextEditingController();
+  TextEditingController newPhoneController = TextEditingController();
+  TextEditingController newAddressController = TextEditingController();
+
   TextEditingController disController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -48,7 +55,7 @@ class _VendorPageState extends State<VendorPage> {
   final double scrollWidth = 12;
   bool isAscending = false;
   int? sortColumnIndex;
-
+  int ret = 0;
   List<DataColumn> getColumns(List<String> columns) => columns
       .map((String column) => DataColumn(
             label: Expanded(
@@ -69,6 +76,141 @@ class _VendorPageState extends State<VendorPage> {
     });
 
     super.initState();
+  }
+
+  getAddNewItem(context) {
+    ret = 0;
+    return Form(
+        key: dataEntryFormState,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(5),
+              margin: const EdgeInsets.only(bottom: 15),
+              alignment: Alignment.center,
+              child: Text(
+                'add-vendor'.tr,
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      fontStyle: FontStyle.italic,
+                      decoration: TextDecoration.underline,
+                      fontSize: 20,
+                    ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: newVendorController,
+                      decoration: InputDecoration(
+                        label: Text("name-vendor".tr),
+                        counterText: "",
+                      ),
+                      validator: (text) {
+                        if (text == '') return "required".tr;
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: newPhoneController,
+                      decoration: InputDecoration(
+                        label: Text("phone".tr),
+                        counterText: "",
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    //    color: Colors.grey.shade500,
+                    margin: const EdgeInsets.all(5),
+                    child: TextFormField(
+                      controller: newAddressController,
+                      decoration: InputDecoration(
+                        label: Text("address".tr),
+                        counterText: "",
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: ButtonWidget(
+                        text: "add".tr,
+                        icon: Icons.add,
+                        onClicked: () async {
+                          if (dataEntryFormState.currentState!.validate()) {
+                            Vendor vendor = Vendor(
+                                phone: newPhoneController.text,
+                                address: newAddressController.text,
+                                id: 0,
+                                name: newVendorController.text);
+                            ret = await sendPostNewVendor(vendor: vendor);
+                            setState(() {});
+                            dismissDialog(context: context);
+                            if (ret == 1) {
+                              setState(() {});
+                              Get.offNamed('/perform');
+                            } else {
+                              dismissDialog(context: context);
+                              Get.dialog(Dialog(
+                                child: Text(" not good"),
+                              ));
+                            }
+                            // if (ret == 1) {
+                            //   dismissDialog(context: context);
+                            //   Get.dialog(Dialog(
+                            //     child: Text("good sound"),
+                            //   ));
+                            // } else {
+                            //   dismissDialog(context: context);
+                            //   Get.dialog(Dialog(
+                            //     child: Text(" not good"),
+                            //   ));
+                            // }
+
+                          }
+
+                          // AwesomeDialog(context: context).dismiss();
+                        }),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: SizedBox(width: 10),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: ButtonWidget(
+                        text: "back".tr,
+                        icon: Icons.backspace_outlined,
+                        onClicked: () {
+                          dismissDialog(context: context);
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 
   ElevatedButton confirmButton({createdAt, id, name, phone, add}) {
@@ -105,7 +247,11 @@ class _VendorPageState extends State<VendorPage> {
               text: 'add-new'.tr,
               icon: Icons.account_circle_outlined,
               onClicked: () {
-                // Get.toNamed('/perform');
+                Get.defaultDialog(
+                    title: "",
+                    content: Container(
+                      child: getAddNewItem(context),
+                    ));
               },
             )),
       ),
@@ -218,7 +364,7 @@ class _VendorPageState extends State<VendorPage> {
                         text: 'back'.tr,
                         icon: Icons.arrow_back,
                         onClicked: () {
-                          Get.toNamed('/perform');
+                          Get.offNamed('/perform');
                         },
                       )),
                 ),
@@ -240,8 +386,8 @@ class _VendorPageState extends State<VendorPage> {
                         return units.isEmpty
                             ? Card(
                                 child: Center(
-                                    child:
-                                        Container(child: Text("Not things"))),
+                                    child: Container(
+                                        child: Text("not-things".tr))),
                               )
                             : SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
@@ -275,9 +421,8 @@ class _VendorPageState extends State<VendorPage> {
                                                 id: unit.id,
                                                 createdAt: unit.createdAt),
                                             dialogType: "Q",
-                                            title:
-                                                "  هل تريد اظهار بيانات الفاتورة",
-                                            desc: " رقم${unit.id} ",
+                                            title: "do-need-appear-info".tr,
+                                            desc: " ${'number'.tr} ${unit.id} ",
                                           );
 
                                           // setState(() {});
@@ -295,7 +440,7 @@ class _VendorPageState extends State<VendorPage> {
                                 ),
                               );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text("حدث خطأ"));
+                        return Center(child: Text("sth-wrong".tr));
                       } else {
                         return Center(child: CircularProgressIndicator());
                       }
@@ -322,15 +467,39 @@ class _VendorPageState extends State<VendorPage> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.all(5),
-                                margin: const EdgeInsets.all(5),
-                                height: 400,
-                                width: mdw,
                                 child: Card(
-                                  color: AColors.Silver,
-                                  child: detailsInvoice(),
+                                  // color: AColors.Silver,
+                                  child: Center(
+                                      child: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    margin: const EdgeInsets.all(5),
+                                    height: 80,
+                                    width: mdw / 4,
+                                    child: ButtonWidget(
+                                      text: 'add-new'.tr,
+                                      icon: Icons.account_circle_outlined,
+                                      onClicked: () {
+                                        Get.defaultDialog(
+                                            title: "",
+                                            content: Container(
+                                              child: getAddNewItem(context),
+                                            ));
+                                      },
+                                    ),
+                                  )),
                                 ),
                               ),
+
+                              // Container(
+                              //   padding: const EdgeInsets.all(5),
+                              //   margin: const EdgeInsets.all(5),
+                              //   height: 400,
+                              //   width: mdw,
+                              //   child: Card(
+                              //     color: AColors.Silver,
+                              //     child: detailsInvoice(),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
