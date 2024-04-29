@@ -804,6 +804,11 @@ class LocaleString extends Translations {
   Map<String, String> arabic() {
     return {
       'add': 'أضافة',
+      'stock': 'مخزون المنتجات',
+      'purchase': 'المشتريات',
+      'perform': 'تهيئة النظام',
+      'parts-shop': 'متجر قطع الغيار',
+      'press-here': 'أضغط هنا',
       'add-vendor': 'أضافة مورد جديد',
       'add-cate': 'أضافة صنف جديد',
       'name-cate': 'اسم الصنف الجديد',

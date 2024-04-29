@@ -422,10 +422,18 @@ class AColors {
 
   /// A Black color .
   static const Color Black = Color(0xFF000000);
+  static const Color GreenAzal = Color(0xFF82A875);
+  static const Color RedAzal = Color(0xFFAC1F24);
+  static const Color BackgroundAzal = Color(0xFFFFFEF0);
 }
 
-const primaryColor = AColors.Blue;
-const secondaryColor = AColors.Salmon;
+const primaryColor = AColors.MidnightBlue;
+const secondaryColor = AColors.Olive;
+const backgroundColor = AColors.BackgroundAzal;
+const kDefaultPadding = 20.0;
+const textColor = AColors.White;
+const textLightColor = AColors.RedAzal;
+
 final constPrimaryColor = Color(primaryColor.value);
 final constSecondaryColor = Color(secondaryColor.value);
 final Color notUpdtblColor = Colors.grey.withOpacity(0.3);
