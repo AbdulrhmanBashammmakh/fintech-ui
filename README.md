@@ -1,6 +1,6 @@
 # fintech
 
-A new Flutter project.
+Accounting application 
 
 ## Getting Started
 
