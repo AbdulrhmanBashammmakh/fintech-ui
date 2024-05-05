@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:fintech/utils/AColors.dart';
 import 'package:fintech/views/Expenses/expenses-main.dart';
 import 'package:fintech/views/HomePage.dart';
-import 'package:fintech/views/Ledger/ledger-main.dart';
+import 'package:fintech/views/Ledger/LedgerBinding.dart';
+import 'package:fintech/views/Ledger/ledger-screen.dart';
 import 'package:fintech/views/LoginPage.dart';
 import 'package:fintech/views/Perform/account-page.dart';
 import 'package:fintech/views/Perform/cate-page.dart';
@@ -26,6 +27,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'views/Stocks/stock-main.dart';
 
 Locale lang = window.locale;
+
 void main() {
   // Get.lazyPut(() => SaleController());
   runApp(const MyApp());
@@ -56,7 +58,8 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       textDirection: TextDirection.rtl,
-      locale: const Locale('ar', 'AR'), // استخدام اللغة العربية كمثال
+      locale: const Locale('ar', 'AR'),
+      // استخدام اللغة العربية كمثال
       supportedLocales: const [
         Locale('ar', 'AR'),
       ],
@@ -195,10 +198,12 @@ final List<GetPage> pages = [
     page: () => NewSaleView(),
     // page: () => const NewSale(),
   ),
+  // GetPage(
+  //   name: "/ledger",
+  //   page: () => const LedgerMain(),
+  // ),
   GetPage(
-    name: "/ledger",
-    page: () => const LedgerMain(),
-  ),
+      name: "/ledger", page: () => LedgerScreen(), binding: LedgerBinding()),
   GetPage(
     name: "/expenses",
     page: () => const ExpensesMain(),
@@ -804,6 +809,11 @@ class LocaleString extends Translations {
   Map<String, String> arabic() {
     return {
       'add': 'أضافة',
+      'cart': 'السلة',
+      'order': 'الطلبات',
+      'search': 'البحث',
+      'suggest': 'الاقتراح',
+      'offer': 'العروض',
       'stock': 'مخزون المنتجات',
       'purchase': 'المشتريات',
       'perform': 'تهيئة النظام',

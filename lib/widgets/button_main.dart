@@ -141,9 +141,10 @@ class ButtonWidget extends StatelessWidget {
   final String text;
   final VoidCallback onClicked;
   final IconData icon;
-
+  final double fontSize = 20;
   const ButtonWidget({
     Key? key,
+    fontSize,
     required this.text,
     required this.onClicked,
     required this.icon,
@@ -164,7 +165,7 @@ class ButtonWidget extends StatelessWidget {
             ),
             Text(
               text,
-              style: TextStyle(fontSize: 20, color: Colors.white),
+              style: TextStyle(fontSize: fontSize, color: Colors.white),
             ),
           ],
         ),

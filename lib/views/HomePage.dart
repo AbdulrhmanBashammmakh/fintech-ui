@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../utils/AjustScroll.dart' as h;
 import '../utils/AColors.dart';
 import '../widgets/section_card.dart';
 
@@ -235,7 +236,7 @@ class HomeBody extends StatelessWidget {
     Icons.settings_suggest_outlined,
     Icons.local_offer_outlined
   ];
-  List titles = [" السلة", "الطلبات", "البحث", "الاقتراحات", " طلب قطع"];
+  List titles = ["cart".tr, "order".tr, "search".tr, "suggest".tr, "offer".tr];
   List<MainTitle> mains = [
     MainTitle(
         title: 'sale'.tr,
@@ -418,6 +419,7 @@ class HomeBody extends StatelessWidget {
                   ? size.width > 1000
                       ? GridView.builder(
                           itemCount: mains.length,
+                          controller: h.AdjustableScrollController(80),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 4),
@@ -427,6 +429,7 @@ class HomeBody extends StatelessWidget {
                               ))
                       : GridView.builder(
                           itemCount: mains.length,
+                          controller: h.AdjustableScrollController(80),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3),
@@ -436,6 +439,7 @@ class HomeBody extends StatelessWidget {
                               ))
                   : ListView.builder(
                       itemCount: mains.length,
+                      controller: h.AdjustableScrollController(80),
                       itemBuilder: (context, index) => ProductContainer(
                             index: index,
                             mainTitle: mains[index],

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../endPoint/send-req.dart';
 import '../../models/Models.dart';
 import '../../utils/AColors.dart';
+import '../../utils/AjustScroll.dart' as h;
 import '../../widgets/button_main.dart';
 
 class StockMain extends StatefulWidget {
@@ -292,6 +293,8 @@ class _StockMainState extends State<StockMain> {
   }
 
   Widget getAvaList() {
+    Size size = MediaQuery.of(context).size;
+
     // if (itr == 1) {
     //   // stockListAva = getInvRequestPost(
     //   //     fullUrl: "http://localhost:9098/myapp238/api/v1/stock/available");
@@ -301,6 +304,7 @@ class _StockMainState extends State<StockMain> {
     // itr++;
     List<DataColumn> getColumns(List<String> columns) => columns
         .map((String column) => DataColumn(
+              // tooltip: "قائمة المخزون",
               label: Expanded(
                   child: Text(column,
                       textAlign:
@@ -336,73 +340,143 @@ class _StockMainState extends State<StockMain> {
     final double scrollWidth = 12;
     bool isAscending = false;
     int? sortColumnIndex;
-    return Card(
-      child: AdaptiveScrollbar(
-        controller: _verticalScrollController,
-        width: scrollWidth,
-        scrollToClickDelta: 75,
-        scrollToClickFirstDelay: 200,
-        scrollToClickOtherDelay: 50,
-        sliderDecoration: sliderDecoration,
-        sliderActiveDecoration: sliderActiveDecoration,
-        underDecoration: underDecoration,
-        child: AdaptiveScrollbar(
-          controller: _horizontalScrollController,
-          underSpacing: EdgeInsets.only(bottom: scrollWidth),
-          width: scrollWidth,
-          position: ScrollbarPosition.bottom,
-          sliderDecoration: sliderDecoration,
-          sliderActiveDecoration: sliderActiveDecoration,
-          underDecoration: underDecoration,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Expanded(
-                child: ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(context)
-                      .copyWith(scrollbars: false),
-                  child: SingleChildScrollView(
-                    controller: _verticalScrollController,
-                    scrollDirection: Axis.vertical,
-                    child: SingleChildScrollView(
-                      controller: _horizontalScrollController,
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: scrollWidth),
-                        child: DataTable(
-                          showBottomBorder: true,
-                          sortAscending: isAscending,
-                          sortColumnIndex: sortColumnIndex,
-                          columns: getColumns(columns),
-                          horizontalMargin: 10,
-                          rows: listAva
-                              .map(
-                                (data) => DataRow(
-                                  cells: <DataCell>[
-                                    DataCell(Text(data.id.toString())),
-                                    DataCell(Text(data.cate.toString())),
-                                    DataCell(Text(data.code)),
-                                    DataCell(Text(data.product)),
-                                    DataCell(Text(data.qty.toString())),
-                                    DataCell(Text(data.cost.toString())),
-                                    DataCell(Text(data.salePrice.toString())),
-                                    DataCell(Text(data.lastBuy.toString())),
-                                    DataCell(Text(data.unit.toString())),
-                                    // DataCell(Text(data.barcode)),
-                                  ],
-                                ),
-                              )
-                              .toList(),
+    double r = size.width * 0.1;
+    double r2 = size.width * 0.15;
+    return Padding(
+      padding: EdgeInsets.only(right: r, left: r2),
+      child: Container(
+        child: Card(
+          child: AdaptiveScrollbar(
+            controller: _verticalScrollController,
+            width: scrollWidth,
+            scrollToClickDelta: 75,
+            scrollToClickFirstDelay: 200,
+            scrollToClickOtherDelay: 50,
+            sliderDecoration: sliderDecoration,
+            sliderActiveDecoration: sliderActiveDecoration,
+            underDecoration: underDecoration,
+            child: AdaptiveScrollbar(
+              controller: _horizontalScrollController,
+              underSpacing: EdgeInsets.only(bottom: scrollWidth),
+              width: scrollWidth,
+              position: ScrollbarPosition.top,
+              sliderDecoration: sliderDecoration,
+              sliderActiveDecoration: sliderActiveDecoration,
+              underDecoration: underDecoration,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    child: ScrollConfiguration(
+                      behavior: ScrollConfiguration.of(context)
+                          .copyWith(scrollbars: false),
+                      child: SingleChildScrollView(
+                        controller: _verticalScrollController,
+                        scrollDirection: Axis.vertical,
+                        child: SingleChildScrollView(
+                          controller: _horizontalScrollController,
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            padding:
+                                EdgeInsets.symmetric(horizontal: scrollWidth),
+                            child: DataTable(
+                              showBottomBorder: true,
+                              sortAscending: isAscending,
+                              sortColumnIndex: sortColumnIndex,
+                              columns: getColumns(columns),
+                              horizontalMargin: 10,
+                              rows: listAva
+                                  .map(
+                                    (data) => DataRow(
+                                      cells: <DataCell>[
+                                        DataCell(Text(data.id.toString())),
+                                        DataCell(Text(data.cate.toString())),
+                                        DataCell(Text(data.code)),
+                                        DataCell(Text(data.product)),
+                                        DataCell(Text(data.qty.toString())),
+                                        DataCell(Text(data.cost.toString())),
+                                        DataCell(
+                                            Text(data.salePrice.toString())),
+                                        DataCell(Text(data.lastBuy.toString())),
+                                        DataCell(Text(data.unit.toString())),
+                                        // DataCell(Text(data.barcode)),
+                                      ],
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget getAvaList1() {
+    return Container(
+      child: ListView.builder(
+          itemCount: listAva.length,
+          scrollDirection: Axis.vertical,
+          physics: ScrollPhysics(),
+          //  controller: h.AdjustableScrollController(80),
+          shrinkWrap: true,
+          // gridDelegate:
+          //     SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+          itemBuilder: (context, index) => Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(200)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultPadding, vertical: 4),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(22),
+                        color: textColor,
+                        boxShadow: [
+                          BoxShadow(
+                              offset: Offset(0, 15),
+                              blurRadius: 25,
+                              color: Colors.black12),
+                        ]),
+                    child: Column(
+                      children: [
+                        ListTile(
+                            title: Text(
+                          '${'product'.tr} / ${listAva[index].product}',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ListTile(
+                                  title: Text(
+                                      '${'qty'.tr} / ${listAva[index].qty}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2)),
+                            ),
+                            Expanded(
+                              child: ListTile(
+                                  title: Text(
+                                      '${'price'.tr} / ${listAva[index].salePrice}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2)),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )),
     );
   }
 
@@ -758,120 +832,220 @@ class _StockMainState extends State<StockMain> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    debugPrint(size.width.toString());
     return Scaffold(
-        appBar: AppBar(
-          //   backgroundColor: AColors.FireBrick,
-          title: Text(
-            "stock-products".tr,
-            style: TextStyle(
-              fontFamily: 'Arial',
-              //   fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+      appBar: AppBar(
+        //   backgroundColor: AColors.FireBrick,
+        title: Text(
+          "stock-products".tr,
+          style: TextStyle(
+            fontFamily: 'Arial',
+            //   fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        body: ListView(
+      ),
+      body: Container(
+        constraints: BoxConstraints(minWidth: 440),
+        child: ListView(
+          controller: h.AdjustableScrollController(80),
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.all(5),
-                      child: ButtonWidget(
-                        text: 'home-page'.tr,
-                        icon: Icons.home,
-                        onClicked: () {
-                          Get.toNamed('/');
-                          //  Get.to('/');
-                        },
-                      )),
-                ),
-                Expanded(child: SizedBox()),
-                Expanded(child: SizedBox()),
-                Expanded(
-                  child: Container(
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.all(5),
-                      child: ButtonWidget(
-                        text: 'back'.tr,
-                        icon: Icons.arrow_back,
-                        onClicked: () {},
-                      )),
-                ),
-              ],
-            ),
-            Divider(thickness: 1, color: notUpdtblColor),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
+            size.width >= 900
+                ? Row(
                     children: [
-                      Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.all(5),
-                          child: ButtonWidget(
-                            text: 'available'.tr,
-                            icon: Icons.event_available,
-                            onClicked: () {
-                              selected = 0;
-                              setState(() {});
-                            },
-                          )),
-                      Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.all(5),
-                          child: ButtonWidget(
-                            text: 'No-available'.tr,
-                            icon: Icons.no_backpack_outlined,
-                            onClicked: () {
-                              selected = 1;
-                              setState(() {});
-                            },
-                          )),
-                      Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.all(5),
-                          child: ButtonWidget(
-                            text: 'price-list'.tr,
-                            icon: Icons.price_change_outlined,
-                            onClicked: () {
-                              selected = 2;
-                              setState(() {});
-                            },
-                          )),
-                      Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.all(5),
-                          child: ButtonWidget(
-                            text: 'movement'.tr,
-                            icon: Icons.move_down,
-                            onClicked: () {
-                              selected = 3;
-                              setState(() {});
-                            },
-                          )),
+                      Expanded(
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            child: ButtonWidget(
+                              text: 'home-page'.tr,
+                              icon: Icons.home,
+                              onClicked: () {
+                                Get.toNamed('/');
+                                //  Get.to('/');
+                              },
+                            )),
+                      ),
+                      Expanded(child: SizedBox()),
+                      Expanded(child: SizedBox()),
+                      Expanded(
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            child: ButtonWidget(
+                              text: 'back'.tr,
+                              icon: Icons.arrow_back,
+                              onClicked: () {},
+                            )),
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            child: IconButton(
+                              icon: Icon(Icons.home, color: primaryColor),
+                              onPressed: () {
+                                Get.toNamed('/');
+                                //  Get.to('/');
+                              },
+                            )),
+                      ),
+                      Spacer(),
+                      Expanded(
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back, color: primaryColor),
+                              onPressed: () {
+                                //Get.toNamed('/');
+                                //  Get.to('/');
+                              },
+                            )),
+                      ),
                     ],
                   ),
-                  flex: 2,
-                ),
-                Expanded(
-                    flex: 5,
+            Divider(thickness: 1, color: notUpdtblColor),
+            Column(
+              children: [
+                size.width >= 1100
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'available'.tr,
+                                icon: Icons.event_available,
+                                onClicked: () {
+                                  selected = 0;
+                                  setState(() {});
+                                },
+                              )),
+                          Container(
+                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'No-available'.tr,
+                                icon: Icons.no_backpack_outlined,
+                                onClicked: () {
+                                  selected = 1;
+                                  setState(() {});
+                                },
+                              )),
+                          Container(
+                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'price-list'.tr,
+                                icon: Icons.price_change_outlined,
+                                onClicked: () {
+                                  selected = 2;
+                                  setState(() {});
+                                },
+                              )),
+                          Container(
+                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'movement'.tr,
+                                icon: Icons.move_down,
+                                onClicked: () {
+                                  selected = 3;
+                                  setState(() {});
+                                },
+                              )),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                              constraints: BoxConstraints(maxWidth: 500),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 80),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'available'.tr,
+                                icon: Icons.event_available,
+                                onClicked: () {
+                                  selected = 0;
+                                  setState(() {});
+                                },
+                              )),
+                          Container(
+                              constraints: BoxConstraints(maxWidth: 500),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 80),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'No-available'.tr,
+                                icon: Icons.no_backpack_outlined,
+                                onClicked: () {
+                                  selected = 1;
+                                  setState(() {});
+                                },
+                              )),
+                          Container(
+                              constraints: BoxConstraints(maxWidth: 500),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 80),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'price-list'.tr,
+                                icon: Icons.price_change_outlined,
+                                onClicked: () {
+                                  selected = 2;
+                                  setState(() {});
+                                },
+                              )),
+                          Container(
+                              constraints: BoxConstraints(maxWidth: 500),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 80),
+                              margin: const EdgeInsets.all(5),
+                              child: ButtonWidget(
+                                text: 'movement'.tr,
+                                icon: Icons.move_down,
+                                onClicked: () {
+                                  selected = 3;
+                                  setState(() {});
+                                },
+                              )),
+                        ],
+                      ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Container(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
+                        children: <Widget>[
                           // Card(
                           //   child: Text("products appear here"),
                           // ),
-                          selected == 0 ? getAvaList() : SizedBox(),
+                          selected == 0
+                              ? size.width <= 900
+                                  ? getAvaList1()
+                                  : getAvaList()
+                              : SizedBox(),
                           selected == 1 ? getAvaNonList() : SizedBox(),
                           selected == 2 ? getNonPriceList() : SizedBox(),
                           selected == 3 ? getMovementList() : SizedBox(),
-                        ]))
+                        ]),
+                  ),
+                )
               ],
             )
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
 
